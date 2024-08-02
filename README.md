@@ -135,7 +135,7 @@ Configure the products:
 
 - `make configure_setup`
   - imports LDIF files into PingDirectory
-  - configured PingFederate and PingAM
+  - configures PingFederate and PingAM
   - imports example journeys into PingAM
 
 **Tip:** to learn how PingFederate and PingAM are configured, review the **main** method in **src/main/java/com/pingfederate/webinar/Main.java**
