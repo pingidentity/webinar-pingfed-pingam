@@ -256,6 +256,8 @@ To view log files in PingFederate:
   - [https://backstage.forgerock.com/docs/am/7.4/install-guide/supported-ldifs.html](https://backstage.forgerock.com/docs/am/7.4/install-guide/supported-ldifs.html)
 - PingIdentity on YouTube:
   - [@PingIdentityTV](https://www.youtube.com/@PingIdentityTV/videos)
+- Webinar: This setup was used during a webinar and can be found here:
+  - [https://www.pingidentity.com/en/company/upcoming-events/webinars/details/commId/620098.html](https://www.pingidentity.com/en/company/upcoming-events/webinars/details/commId/620098.html)
 
 # DISCLAIMER
 
