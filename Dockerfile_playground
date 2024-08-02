@@ -1,0 +1,45 @@
+FROM tomcat:9-jdk8
+
+RUN apt update
+RUN apt install unzip zip
+
+# We do not want to keep the default applications, remove them
+#
+RUN rm -rf /usr/local/tomcat/webapps/*
+
+# Adding OAuthPlayground
+#
+COPY docker-build/add-ons/oauthplayground/OAuthPlayground-4.4.zip /tmp/OAuthPlayground-4.4.zip
+RUN unzip -a /tmp/OAuthPlayground-4.4.zip -d /tmp/oauthplayground
+RUN mv /tmp/oauthplayground/OAuthPlayground-4.4/dist/deploy/OAuthPlayground.war /usr/local/tomcat/webapps
+RUN rm -f /tmp/OAuthPlayground-4.4.zip
+RUN rm -fr /tmp/oauthplayground
+
+# Create directory for holding SSL keys
+#
+RUN mkdir /usr/local/tomcat/ssl
+
+# create non-priviliged user (with its own group) to run tomcat
+#
+RUN addgroup tomcat
+RUN adduser --ingroup tomcat tomcat
+RUN chown -R tomcat:tomcat /usr/local/tomcat/
+
+# Copy the server.xml file that uses SSL and the entrypoint script that updates the file with configured hostname and port
+#
+COPY docker-build/add-ons/oauthplayground/usr/local/tomcat/conf/server.xml /usr/local/tomcat/conf/server.xml
+COPY docker-build/add-ons/oauthplayground/opt/docker/entrypoint.sh /opt/docker/entrypoint.sh
+
+COPY dev/pubCert.crt /tmp/pubCert.crt
+
+RUN keytool -importcert \
+    -alias pubCert \
+    -file /tmp/pubCert.crt \
+    -storepass changeit \
+    -keystore $JAVA_HOME/jre/lib/security/cacerts \
+    -trustcacerts \
+    -noprompt
+
+RUN rm -f /tmp/pubCert.crt
+
+CMD ["/opt/docker/entrypoint.sh"]

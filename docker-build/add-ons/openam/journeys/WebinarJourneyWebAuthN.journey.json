@@ -1,0 +1,291 @@
+{
+  "meta": {
+    "origin": "https://openam.webinar.local:8449/openam",
+    "originAmVersion": "7.4.0",
+    "exportedBy": "amAdmin",
+    "exportDate": "2024-07-06T06:33:23.001Z",
+    "exportTool": "frodo",
+    "exportToolVersion": "v1.1.0 [v18.5.0]"
+  },
+  "innerNodes": {},
+  "nodes": {
+    "7adf255e-9141-43e0-b378-361e43d98503": {
+      "_id": "7adf255e-9141-43e0-b378-361e43d98503",
+      "_rev": "1484208630",
+      "trustStoreAlias": "alpha",
+      "relyingPartyName": "webinar.local",
+      "maxSavedDevices": 0,
+      "generateRecoveryCodes": true,
+      "storeAttestationDataInTransientState": false,
+      "relyingPartyDomain": "webinar.local",
+      "origins": [
+        "webinar.local"
+      ],
+      "userVerificationRequirement": "DISCOURAGED",
+      "postponeDeviceProfileStorage": false,
+      "excludeCredentials": false,
+      "requiresResidentKey": false,
+      "authenticatorAttachment": "UNSPECIFIED",
+      "asScript": true,
+      "acceptedSigningAlgorithms": [
+        "ES256",
+        "RS256"
+      ],
+      "timeout": 60,
+      "attestationPreference": "NONE",
+      "enforceRevocationCheck": false,
+      "_type": {
+        "_id": "WebAuthnRegistrationNode",
+        "name": "WebAuthn Registration Node",
+        "collection": true
+      },
+      "_outcomes": [
+        {
+          "id": "unsupported",
+          "displayName": "Unsupported"
+        },
+        {
+          "id": "success",
+          "displayName": "Success"
+        },
+        {
+          "id": "failure",
+          "displayName": "Failure"
+        },
+        {
+          "id": "error",
+          "displayName": "Client Error"
+        }
+      ]
+    },
+    "f1e03c7e-4fd3-4736-bdb1-7548d5ffe829": {
+      "_id": "f1e03c7e-4fd3-4736-bdb1-7548d5ffe829",
+      "_rev": "682840986",
+      "requiresResidentKey": false,
+      "asScript": true,
+      "relyingPartyDomain": "webinar.local",
+      "origins": [],
+      "userVerificationRequirement": "PREFERRED",
+      "isRecoveryCodeAllowed": true,
+      "timeout": 60,
+      "_type": {
+        "_id": "WebAuthnAuthenticationNode",
+        "name": "WebAuthn Authentication Node",
+        "collection": true
+      },
+      "_outcomes": [
+        {
+          "id": "unsupported",
+          "displayName": "Unsupported"
+        },
+        {
+          "id": "noDevice",
+          "displayName": "No Device Registered"
+        },
+        {
+          "id": "success",
+          "displayName": "Success"
+        },
+        {
+          "id": "failure",
+          "displayName": "Failure"
+        },
+        {
+          "id": "error",
+          "displayName": "Client Error"
+        },
+        {
+          "id": "recoveryCode",
+          "displayName": "Recovery Code"
+        }
+      ]
+    },
+    "4d9af624-1695-460f-b6bb-b33a9bdfb1c2": {
+      "_id": "4d9af624-1695-460f-b6bb-b33a9bdfb1c2",
+      "_rev": "-2025324124",
+      "_type": {
+        "_id": "DataStoreDecisionNode",
+        "name": "Data Store Decision",
+        "collection": true
+      },
+      "_outcomes": [
+        {
+          "id": "true",
+          "displayName": "True"
+        },
+        {
+          "id": "false",
+          "displayName": "False"
+        }
+      ]
+    },
+    "3946ca73-e31c-4102-b1f9-cb023a0ed3ec": {
+      "_id": "3946ca73-e31c-4102-b1f9-cb023a0ed3ec",
+      "_rev": "1768889365",
+      "_type": {
+        "_id": "PasswordCollectorNode",
+        "name": "Password Collector",
+        "collection": true
+      },
+      "_outcomes": [
+        {
+          "id": "outcome",
+          "displayName": "Outcome"
+        }
+      ]
+    },
+    "2d90dc82-2724-4462-8fff-5a6eb466c824": {
+      "_id": "2d90dc82-2724-4462-8fff-5a6eb466c824",
+      "_rev": "562972788",
+      "_type": {
+        "_id": "UsernameCollectorNode",
+        "name": "Username Collector",
+        "collection": true
+      },
+      "_outcomes": [
+        {
+          "id": "outcome",
+          "displayName": "Outcome"
+        }
+      ]
+    },
+    "0efd4461-1972-4d13-ad34-adc8648a2fca": {
+      "_id": "0efd4461-1972-4d13-ad34-adc8648a2fca",
+      "_rev": "-1830921969",
+      "recoveryCodeType": "OATH",
+      "_type": {
+        "_id": "RecoveryCodeCollectorDecisionNode",
+        "name": "Recovery Code Collector Decision",
+        "collection": true
+      },
+      "_outcomes": [
+        {
+          "id": "true",
+          "displayName": "True"
+        },
+        {
+          "id": "false",
+          "displayName": "False"
+        }
+      ]
+    },
+    "7e41a4ca-6363-45e0-bda4-cfcf5b82b1e2": {
+      "_id": "7e41a4ca-6363-45e0-bda4-cfcf5b82b1e2",
+      "_rev": "824128715",
+      "_type": {
+        "_id": "RecoveryCodeDisplayNode",
+        "name": "Recovery Code Display Node",
+        "collection": true
+      },
+      "_outcomes": [
+        {
+          "id": "outcome",
+          "displayName": "Outcome"
+        }
+      ]
+    }
+  },
+  "scripts": {},
+  "emailTemplates": {},
+  "socialIdentityProviders": {},
+  "themes": [],
+  "saml2Entities": {},
+  "circlesOfTrust": {},
+  "tree": {
+    "_id": "WebinarJourneyWebAuthN",
+    "_rev": "-1936158311",
+    "uiConfig": {},
+    "entryNodeId": "2d90dc82-2724-4462-8fff-5a6eb466c824",
+    "innerTreeOnly": false,
+    "nodes": {
+      "7adf255e-9141-43e0-b378-361e43d98503": {
+        "displayName": "WebAuthn Registration Node",
+        "nodeType": "WebAuthnRegistrationNode",
+        "x": 291,
+        "y": 362,
+        "connections": {
+          "success": "7e41a4ca-6363-45e0-bda4-cfcf5b82b1e2",
+          "failure": "e301438c-0bd0-429c-ab0c-66126501069a",
+          "error": "e301438c-0bd0-429c-ab0c-66126501069a",
+          "unsupported": "e301438c-0bd0-429c-ab0c-66126501069a"
+        }
+      },
+      "f1e03c7e-4fd3-4736-bdb1-7548d5ffe829": {
+        "displayName": "WebAuthn Authentication Node",
+        "nodeType": "WebAuthnAuthenticationNode",
+        "x": 496,
+        "y": 20,
+        "connections": {
+          "noDevice": "3946ca73-e31c-4102-b1f9-cb023a0ed3ec",
+          "success": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+          "recoveryCode": "0efd4461-1972-4d13-ad34-adc8648a2fca",
+          "unsupported": "e301438c-0bd0-429c-ab0c-66126501069a",
+          "failure": "e301438c-0bd0-429c-ab0c-66126501069a",
+          "error": "e301438c-0bd0-429c-ab0c-66126501069a"
+        }
+      },
+      "4d9af624-1695-460f-b6bb-b33a9bdfb1c2": {
+        "displayName": "Data Store Decision",
+        "nodeType": "DataStoreDecisionNode",
+        "x": 91,
+        "y": 588,
+        "connections": {
+          "true": "7adf255e-9141-43e0-b378-361e43d98503",
+          "false": "e301438c-0bd0-429c-ab0c-66126501069a"
+        }
+      },
+      "3946ca73-e31c-4102-b1f9-cb023a0ed3ec": {
+        "connections": {
+          "outcome": "4d9af624-1695-460f-b6bb-b33a9bdfb1c2"
+        },
+        "nodeType": "PasswordCollectorNode",
+        "displayName": "Password Collector",
+        "x": 78,
+        "y": 231
+      },
+      "2d90dc82-2724-4462-8fff-5a6eb466c824": {
+        "connections": {
+          "outcome": "f1e03c7e-4fd3-4736-bdb1-7548d5ffe829"
+        },
+        "nodeType": "UsernameCollectorNode",
+        "displayName": "Username Collector",
+        "x": 183,
+        "y": 29
+      },
+      "0efd4461-1972-4d13-ad34-adc8648a2fca": {
+        "displayName": "Recovery Code Collector Decision",
+        "nodeType": "RecoveryCodeCollectorDecisionNode",
+        "x": 927,
+        "y": 194,
+        "connections": {
+          "true": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+          "false": "e301438c-0bd0-429c-ab0c-66126501069a"
+        }
+      },
+      "7e41a4ca-6363-45e0-bda4-cfcf5b82b1e2": {
+        "displayName": "Recovery Code Display Node",
+        "nodeType": "RecoveryCodeDisplayNode",
+        "x": 575,
+        "y": 310,
+        "connections": {
+          "outcome": "f1e03c7e-4fd3-4736-bdb1-7548d5ffe829"
+        }
+      }
+    },
+    "staticNodes": {
+      "startNode": {
+        "x": 55,
+        "y": 28
+      },
+      "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+        "x": 1170,
+        "y": 20
+      },
+      "e301438c-0bd0-429c-ab0c-66126501069a": {
+        "x": 1081,
+        "y": 508
+      }
+    },
+    "enabled": true
+  }
+}

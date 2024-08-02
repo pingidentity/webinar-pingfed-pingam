@@ -1,0 +1,26 @@
+FROM openjdk:11-jdk
+
+RUN apt update
+RUN apt install unzip
+
+ARG version
+ENV build_version $version
+
+COPY products/pingfederate/$build_version /tmp/pingfederate.zip
+
+RUN unzip -a /tmp/pingfederate.zip
+
+RUN mv `echo $build_version | sed -e "s/.zip//g"`/pingfederate /opt/pingfederate
+
+RUN rm -r `echo $build_version | sed -e "s/.zip//g"`
+RUN rm /tmp/pingfederate.zip
+
+RUN chmod 755 /opt/pingfederate/bin/run.sh
+
+# Install PingAM IK
+#
+COPY docker-build/add-ons/pingfederate/pf-pingam-adapter-1.0.jar /opt/pingfederate/server/default/deploy/pf-pingam-adapter-1.0.jar
+
+###
+
+CMD ["/opt/pingfederate/bin/run.sh"]

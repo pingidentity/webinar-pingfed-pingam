@@ -1,0 +1,190 @@
+{
+  "meta": {
+    "origin": "https://openam.webinar.local:8449/openam",
+    "originAmVersion": "7.5.0",
+    "exportedBy": "amAdmin",
+    "exportDate": "2024-07-18T23:29:00.483Z",
+    "exportTool": "frodo",
+    "exportToolVersion": "v1.1.0 [v18.5.0]"
+  },
+  "innerNodes": {
+    "d55fd598-5d03-4a7f-b470-21808af559f7": {
+      "_id": "d55fd598-5d03-4a7f-b470-21808af559f7",
+      "_rev": "1925853068",
+      "_type": {
+        "_id": "UsernameCollectorNode",
+        "name": "Username Collector",
+        "collection": true
+      },
+      "_outcomes": [
+        {
+          "id": "outcome",
+          "displayName": "Outcome"
+        }
+      ]
+    },
+    "bdc8ba8e-e6cc-42e3-9e1f-39c965f9ddcf": {
+      "_id": "bdc8ba8e-e6cc-42e3-9e1f-39c965f9ddcf",
+      "_rev": "1411951487",
+      "_type": {
+        "_id": "PasswordCollectorNode",
+        "name": "Password Collector",
+        "collection": true
+      },
+      "_outcomes": [
+        {
+          "id": "outcome",
+          "displayName": "Outcome"
+        }
+      ]
+    }
+  },
+  "nodes": {
+    "2bf5899d-0a8a-4cb2-9e5e-c4ceee9aab72": {
+      "_id": "2bf5899d-0a8a-4cb2-9e5e-c4ceee9aab72",
+      "_rev": "1280125254",
+      "_type": {
+        "_id": "DataStoreDecisionNode",
+        "name": "Data Store Decision",
+        "collection": true
+      },
+      "_outcomes": [
+        {
+          "id": "true",
+          "displayName": "True"
+        },
+        {
+          "id": "false",
+          "displayName": "False"
+        }
+      ]
+    },
+    "03cf36cc-687c-4d29-949f-6ce9958babcb": {
+      "_id": "03cf36cc-687c-4d29-949f-6ce9958babcb",
+      "_rev": "721355272",
+      "nodes": [
+        {
+          "_id": "d55fd598-5d03-4a7f-b470-21808af559f7",
+          "nodeType": "UsernameCollectorNode",
+          "displayName": "Username Collector"
+        },
+        {
+          "_id": "bdc8ba8e-e6cc-42e3-9e1f-39c965f9ddcf",
+          "nodeType": "PasswordCollectorNode",
+          "displayName": "Password Collector"
+        }
+      ],
+      "pageDescription": {},
+      "pageHeader": {},
+      "_type": {
+        "_id": "PageNode",
+        "name": "Page Node",
+        "collection": true
+      },
+      "_outcomes": [
+        {
+          "id": "outcome",
+          "displayName": "Outcome"
+        }
+      ]
+    },
+    "5edbe28a-1551-4d9f-866e-ea8cdd8ebd5c": {
+      "_id": "5edbe28a-1551-4d9f-866e-ea8cdd8ebd5c",
+      "_rev": "399790790",
+      "script": "d2f4ba34-a2d8-4b75-96dc-87d6a277ebf7",
+      "outcomes": [
+        "true"
+      ],
+      "outputs": [
+        "*"
+      ],
+      "inputs": [
+        "*"
+      ],
+      "_type": {
+        "_id": "ScriptedDecisionNode",
+        "name": "Scripted Decision",
+        "collection": true
+      },
+      "_outcomes": [
+        {
+          "id": "true",
+          "displayName": "true"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "d2f4ba34-a2d8-4b75-96dc-87d6a277ebf7": {
+      "_id": "d2f4ba34-a2d8-4b75-96dc-87d6a277ebf7",
+      "name": "WebinarSetSessionProps",
+      "description": "Extract user attributes from LDAP",
+      "script": "\"/*\\n  - Data made available by nodes that have already executed are available in the sharedState variable.\\n  - The script should set outcome to either \\\"true\\\" or \\\"false\\\".\\n  - Note: This script is not fault tolerant. It is simply meant give an idea how script nodes may be used.\\n */\\nvar fr = JavaImporter(org.forgerock.openam.auth.node.api.Action);\\n\\nvar userId = nodeState.get(\\\"username\\\").asString();\\n\\n// lookup attributes by LDAP attribute name\\nvar emailAddress = idRepository.getAttribute(userId, \\\"mail\\\").toArray()[0];\\n\\n// for each attribute, add the 'putSessionProperty' method\\naction = fr.Action.goTo(\\\"true\\\").putSessionProperty(\\\"am.protected.mail\\\", emailAddress).putSessionProperty(\\\"am.protected.telephoneNumber\\\", userId).build();\\n\\noutcome = \\\"true\\\";\"",
+      "default": false,
+      "language": "JAVASCRIPT",
+      "context": "AUTHENTICATION_TREE_DECISION_NODE",
+      "createdBy": "null",
+      "creationDate": 0,
+      "lastModifiedBy": "null",
+      "lastModifiedDate": 0,
+      "evaluatorVersion": "1.0"
+    }
+  },
+  "emailTemplates": {},
+  "socialIdentityProviders": {},
+  "themes": [],
+  "saml2Entities": {},
+  "circlesOfTrust": {},
+  "tree": {
+    "_id": "WebinarJourney",
+    "_rev": "-1468359413",
+    "uiConfig": {},
+    "entryNodeId": "03cf36cc-687c-4d29-949f-6ce9958babcb",
+    "innerTreeOnly": false,
+    "nodes": {
+      "2bf5899d-0a8a-4cb2-9e5e-c4ceee9aab72": {
+        "displayName": "Data Store Decision",
+        "nodeType": "DataStoreDecisionNode",
+        "x": 502,
+        "y": 32,
+        "connections": {
+          "true": "5edbe28a-1551-4d9f-866e-ea8cdd8ebd5c",
+          "false": "e301438c-0bd0-429c-ab0c-66126501069a"
+        }
+      },
+      "03cf36cc-687c-4d29-949f-6ce9958babcb": {
+        "displayName": "Page Node",
+        "nodeType": "PageNode",
+        "x": 220,
+        "y": 29,
+        "connections": {
+          "outcome": "2bf5899d-0a8a-4cb2-9e5e-c4ceee9aab72"
+        }
+      },
+      "5edbe28a-1551-4d9f-866e-ea8cdd8ebd5c": {
+        "displayName": "Scripted Decision",
+        "nodeType": "ScriptedDecisionNode",
+        "x": 770,
+        "y": 37,
+        "connections": {
+          "true": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+        }
+      }
+    },
+    "staticNodes": {
+      "startNode": {
+        "x": 50,
+        "y": 25
+      },
+      "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+        "x": 996,
+        "y": 110
+      },
+      "e301438c-0bd0-429c-ab0c-66126501069a": {
+        "x": 1000,
+        "y": 155
+      }
+    },
+    "enabled": true
+  }
+}

@@ -1,0 +1,23 @@
+version: '3.4'
+services:
+
+  # https://playground.webinar.local:8448/OAuthPlayground
+  oauthplayground:
+    image: webinar/oauth-playground:latest
+    container_name: playgroundwebinarlocal
+    hostname: playground.webinar.local
+    restart: on-failure
+    networks:
+      - webinar
+    ports:
+      - "8448:8448"
+    environment:
+      - "SSL_PWD=${SSL_PWD}"
+      - "SSL_PORT=8448"
+      - "HOSTNAME=${HOSTNAME_PLAYGROUND}"
+    volumes:
+      - ./dev/tlskey.p12:/usr/local/tomcat/ssl/tlskey.p12
+
+networks:
+  webinar:
+    driver: bridge

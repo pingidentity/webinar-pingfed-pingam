@@ -1,0 +1,173 @@
+{
+  "_id": "to-be-replaced",
+  "ldapsettings": {
+    "openam-idrepo-ldapv3-affinity-enabled": false,
+    "sun-idrepo-ldapv3-config-ldap-server": [
+    ],
+    "openam-idrepo-ldapv3-heartbeat-interval": 10,
+    "sun-idrepo-ldapv3-config-time-limit": 10,
+    "sun-idrepo-ldapv3-config-max-result": 1000,
+    "openam-idrepo-ldapv3-behera-support-enabled": false,
+    "sun-idrepo-ldapv3-config-organization_name": "to-be-replaced",
+    "sun-idrepo-ldapv3-config-authid": "to-be-replaced",
+    "openam-idrepo-ldapv3-keepalive-searchfilter": "(objectclass=*)",
+    "sun-idrepo-ldapv3-config-connection_pool_max_size": 10,
+    "openam-idrepo-ldapv3-keepalive-searchbase": "",
+    "sun-idrepo-ldapv3-config-connection-mode": "LDAP",
+    "sun-idrepo-ldapv3-config-connection_pool_min_size": 1,
+    "sun-idrepo-ldapv3-config-authpw": "to-be-replaced",
+    "openam-idrepo-ldapv3-heartbeat-timeunit": "SECONDS",
+    "sun-idrepo-ldapv3-config-search-scope": "SCOPE_SUB"
+  },
+  "userconfig": {
+    "sun-idrepo-ldapv3-config-user-attributes": [
+      "userPassword",
+      "telephoneNumber",
+      "mail",
+      "manager",
+      "authorityRevocationList",
+      "givenName",
+      "objectClass",
+      "adminRole",
+      "distinguishedName",
+      "dn",
+      "cn",
+      "employeeNumber",
+      "lastEmailSent",
+      "uid",
+      "postalAddress",
+      "userCertificate",
+      "preferredlanguage",
+      "inetUserStatus",
+      "memberOf",
+      "sn",
+      "caCertificate",
+      "retryLimitNodeCount",
+      "iplanet-am-auth-configuration-service",
+      "iplanet-am-user-alias-list",
+      "iplanet-am-user-password-reset-question-answer",
+      "assignedDashboard",
+      "iplanet-am-user-password-reset-options",
+      "createTimestamp",
+      "kbaActiveIndex",
+      "iplanet-am-session-quota-limit",
+      "iplanet-am-user-auth-config",
+      "sun-fm-saml2-nameid-infokey",
+      "sunIdentityMSISDNNumber",
+      "iplanet-am-user-password-reset-force-reset",
+      "sunAMAuthInvalidAttemptsData",
+      "devicePrintProfiles",
+      "iplanet-am-session-get-valid-sessions",
+      "inetUserHttpURL",
+      "iplanet-am-user-account-life",
+      "preferredtimezone",
+      "iplanet-am-user-admin-start-dn",
+      "boundDevices",
+      "oath2faEnabled",
+      "sun-fm-saml2-nameid-info",
+      "iplanet-am-session-service-status",
+      "iplanet-am-session-max-idle-time",
+      "iplanet-am-session-destroy-sessions",
+      "kbaInfoAttempts",
+      "modifyTimestamp",
+      "iplanet-am-user-success-url",
+      "iplanet-am-user-auth-modules",
+      "kbaInfo",
+      "preferredLocale",
+      "iplanet-am-session-max-session-time",
+      "deviceProfiles",
+      "oathDeviceProfiles",
+      "webauthnDeviceProfiles",
+      "iplanet-am-user-login-status",
+      "pushDeviceProfiles",
+      "push2faEnabled",
+      "iplanet-am-user-failure-url",
+      "iplanet-am-session-max-caching-time"
+    ],
+    "sun-idrepo-ldapv3-config-inactive": "Inactive",
+    "sun-idrepo-ldapv3-config-auth-kba-index-attr": "kbaActiveIndex",
+    "sun-idrepo-ldapv3-config-auth-kba-attempts-attr": [
+      "kbaInfoAttempts"
+    ],
+    "sun-idrepo-ldapv3-config-user-objectclass": [
+      "inetUser",
+      "top",
+      "organizationalPerson",
+      "person",
+      "inetorgperson",
+      "iplanet-am-managed-person",
+      "sunFMSAML2NameIdentifier",
+      "deviceProfilesContainer",
+      "iplanet-am-user-service",
+      "iPlanetPreferences",
+      "pushDeviceProfilesContainer",
+      "forgerock-am-dashboard-service",
+      "sunAMAuthAccountLockout",
+      "oathDeviceProfilesContainer",
+      "webauthnDeviceProfilesContainer",
+      "iplanet-am-auth-configuration-service",
+      "boundDevicesContainer",
+      "kbaInfoContainer"
+    ],
+    "sun-idrepo-ldapv3-config-auth-kba-attr": [
+      "kbaInfo"
+    ],
+    "sun-idrepo-ldapv3-config-users-search-attribute": "uid",
+    "sun-idrepo-ldapv3-config-active": "Active",
+    "sun-idrepo-ldapv3-config-isactive": "inetuserstatus",
+    "sun-idrepo-ldapv3-config-users-search-filter": "(objectclass=inetorgperson)",
+    "sun-idrepo-ldapv3-config-createuser-attr-mapping": [
+      "cn",
+      "sn"
+    ]
+  },
+  "groupconfig": {
+    "sun-idrepo-ldapv3-config-group-attributes": [
+      "ou",
+      "description",
+      "dn",
+      "cn",
+      "uniqueMember",
+      "objectclass"
+    ],
+    "sun-idrepo-ldapv3-config-groups-search-attribute": "cn",
+    "sun-idrepo-ldapv3-config-memberurl": "memberUrl",
+    "sun-idrepo-ldapv3-config-group-container-name": "ou",
+    "sun-idrepo-ldapv3-config-group-objectclass": [
+      "top",
+      "groupofuniquenames"
+    ],
+    "sun-idrepo-ldapv3-config-uniquemember": "uniqueMember",
+    "sun-idrepo-ldapv3-config-groups-search-filter": "(objectclass=groupOfUniqueNames)",
+    "sun-idrepo-ldapv3-config-group-container-value": "groups"
+  },
+  "errorhandling": {
+    "com.iplanet.am.ldap.connection.delay.between.retries": 1000
+  },
+  "pluginconfig": {
+    "sunIdRepoAttributeMapping": [],
+    "sunIdRepoSupportedOperations": [
+      "realm=read,create,edit,delete,service",
+      "user=read,create,edit,delete,service",
+      "group=read,create,edit,delete"
+    ],
+    "sunIdRepoClass": "org.forgerock.openam.idrepo.ldap.DJLDAPv3Repo"
+  },
+  "authentication": {
+    "sun-idrepo-ldapv3-config-auth-naming-attr": "uid"
+  },
+  "persistentsearch": {
+    "sun-idrepo-ldapv3-config-psearch-filter": "(objectclass=*)",
+    "sun-idrepo-ldapv3-config-psearchbase": "to-be-replaced",
+    "sun-idrepo-ldapv3-config-psearch-scope": "SCOPE_SUB"
+  },
+  "cachecontrol": {
+    "sun-idrepo-ldapv3-dncache-enabled": false,
+    "sun-idrepo-ldapv3-dncache-size": 1500
+  },
+  "_type": {
+    "_id": "LDAPv3",
+    "name": "Generic LDAPv3",
+    "collection": true
+  }
+}

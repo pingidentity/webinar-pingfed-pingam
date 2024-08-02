@@ -1,0 +1,77 @@
+FROM openjdk:11-jdk
+
+RUN apt update
+RUN apt install unzip
+
+ARG version
+ARG hostname
+ENV build_version $version
+ENV local_hostname $hostname
+
+COPY products/pingdirectory/$build_version /tmp/pingdirectory.zip
+
+RUN unzip -a /tmp/pingdirectory.zip
+
+RUN mv PingDirectory /opt/pingdirectory
+
+# This is only needed for building the image and will be removed further down
+#
+COPY products/pingdirectory/pingdirectory.lic /opt/pingdirectory/licence.lic
+
+# More info on setup:
+# - https://docs.pingidentity.com/r/en-us/pingdirectory-92/pd_proxy_join_with_non-interactive_setup
+#
+RUN /opt/pingdirectory/setup --acceptLicense \
+                                     --licenseKeyFile /opt/pingdirectory/licence.lic \
+                                     --baseDN dc=pingdirectory,dc=local \
+                                     --localHostName `echo $local_hostname | sed -e "s/HOSTNAME_PD=//g"` --ldapPort 389 --skipHostnameCheck \
+                                     --rootUserDN "cn=administrator" --rootUserPassword password \
+                                     --maxHeapSize 768m --primeDB --ldapsPort 636 --httpsPort 9443 \
+                                     --instanceName pdwebinarlocal --location office \
+                                     --optionCacheDirectory /opt/pingdirectory/option-cache \
+                                     --enableStartTLS --generateSelfSignedCertificate --no-prompt \
+                                     --doNotStart --allowWeakRootUserPassword
+
+RUN mkdir -p /opt/tmp/pingamldifs
+
+COPY docker-build/add-ons/pingdirectory/config/MakeLDIF/example-10.template /opt/pingdirectory/config/MakeLDIF/example-10.template
+RUN /opt/pingdirectory/bin/make-ldif --templateFile /opt/pingdirectory/config/MakeLDIF/example-10.template --ldifFile /opt/tmp/data.ldif --randomSeed 0
+RUN /opt/pingdirectory/bin/import-ldif --backendID userRoot --ldifFile /opt/tmp/data.ldif --rejectFile /opt/tmp/rejects.ldif --skipFile /opt/tmp/skipped.ldif --overwrite --overwriteExistingEntries --stripTrailingSpaces
+
+WORKDIR /opt/pingdirectory
+
+COPY docker-build/add-ons/pingdirectory/opt/docker/entrypoint.sh /opt/docker/entrypoint.sh
+
+RUN chmod +x /opt/docker/entrypoint.sh
+
+# This was only needed for building image. The actual license will be mounted as volume
+#
+RUN rm -f /opt/pingdirectory/licence.lic
+
+COPY dev/pubCert.crt /tmp/pubCert.crt
+
+# Copy LDIF files to support MFA with PingAM
+#
+COPY docker-build/add-ons/pingdirectory/import_ldifs.sh /opt/docker/import_ldifs.sh
+RUN chmod +x /opt/docker/import_ldifs.sh
+
+COPY docker-build/add-ons/pingdirectory/pingam-ldif/099-opendj_user_schema.ldif /opt/tmp/pingamldifs/opendj_user_schema.ldif
+COPY docker-build/add-ons/pingdirectory/pingam-ldif/100-opendj_deviceprint.ldif /opt/tmp/pingamldifs/opendj_deviceprint.ldif
+COPY docker-build/add-ons/pingdirectory/pingam-ldif/101-opendj_dashboard.ldif /opt/tmp/pingamldifs/opendj_dashboard.ldif
+COPY docker-build/add-ons/pingdirectory/pingam-ldif/102-opendj_pushdevices.ldif /opt/tmp/pingamldifs/opendj_pushdevices.ldif
+COPY docker-build/add-ons/pingdirectory/pingam-ldif/103-opendj_oathdevices.ldif /opt/tmp/pingamldifs/opendj_oathdevices.ldif
+COPY docker-build/add-ons/pingdirectory/pingam-ldif/104-oath_2fa.ldif /opt/tmp/pingamldifs/oath_2fa.ldif
+COPY docker-build/add-ons/pingdirectory/pingam-ldif/105-opendj_deviceprofiles.ldif /opt/tmp/pingamldifs/opendj_deviceprofiles.ldif
+COPY docker-build/add-ons/pingdirectory/pingam-ldif/106-opendj_webauthndevices.ldif /opt/tmp/pingamldifs/opendj_webauthndevices.ldif
+COPY docker-build/add-ons/pingdirectory/pingam-ldif/107-opendj_bounddevices.ldif /opt/tmp/pingamldifs/opendj_bounddevices.ldif
+COPY docker-build/add-ons/pingdirectory/pingam-ldif/108-opendj_kba.ldif /opt/tmp/pingamldifs/opendj_kba.ldif
+
+RUN keytool -importcert \
+    -alias pubCert \
+    -file /tmp/pubCert.crt \
+    -storepass changeit \
+    -keystore $JAVA_HOME/lib/security/cacerts \
+    -trustcacerts \
+    -noprompt
+
+CMD ["/opt/docker/entrypoint.sh"]

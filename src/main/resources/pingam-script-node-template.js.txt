@@ -1,0 +1,17 @@
+/*
+  - Data made available by nodes that have already executed are available in the sharedState variable.
+  - The script should set outcome to either "true" or "false".
+  - Note: This script is not fault-tolerant. It is simply meant to give an idea how script nodes may be used in the context of the webinar.
+ */
+var fr = JavaImporter(org.forgerock.openam.auth.node.api.Action);
+
+var userId = nodeState.get("username").asString();
+var requestedJourney = requestParameters.get("service").get(0);
+
+// lookup attributes by LDAP attribute name
+@@placeholder1@@
+
+// for each attribute, add the 'putSessionProperty' method
+action = fr.Action.goTo("true").putSessionProperty("am.protected.sessionUsername", userId).putSessionProperty("am.protected.requestedJourney", requestedJourney)@@placeholder2@@.build();
+
+outcome = "true";

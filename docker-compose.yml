@@ -1,0 +1,58 @@
+version: '3.4'
+services:
+
+  # user: Administrator/Password1
+  # https://pf.webinar.local:9999
+  pfwebinarlocal:
+    image: webinar/pf:latest
+    container_name: pfwebinarlocal
+    hostname: pf.webinar.local
+    restart: on-failure
+    networks:
+      - webinar
+    ports:
+      - "9031:9031"
+      - "9999:9999"
+    environment:
+      - "PF_RUN_PF_CONSOLE_TITLE=Webinar"
+      - "PF_RUN_PF_ADMIN_BASEURL=https://${PF_ADMIN_NODE}"
+    volumes:
+      - ./products/pingfederate/pingfederate.lic:/opt/pingfederate/server/default/conf/pingfederate.lic
+
+  # https://openam.webinar.local:8449/openam/XUI/#login/
+  # amAdmin, Password1
+  openamwebinarlocal:
+    image: webinar/openam:latest
+    container_name: openamwebinarlocal
+    hostname: openam.webinar.local
+    restart: on-failure
+    networks:
+      - webinar
+    ports:
+      - "8449:8449"
+    volumes:
+      - ./dev/tlskey.p12:/usr/local/tomcat/ssl/tlskey.p12
+    environment:
+      - "SSL_PWD=${SSL_PWD}"
+      - "SSL_PORT=8449"
+      - "HOSTNAME=${HOSTNAME_AM}"
+
+  # cn=administrator/ password
+  # https://pd.webinar.local:9443/console
+  pdwebinarlocal:
+    image: webinar/pd:latest
+    container_name: pdwebinarlocal
+    hostname: pd.webinar.local
+    restart: on-failure
+    networks:
+      - webinar
+    ports:
+      - "9443:9443"
+      - "389:389"
+      - "636:636"
+    volumes:
+      - ./products/pingdirectory/pingdirectory.lic:/opt/pingdirectory/licence.lic
+
+networks:
+  webinar:
+    driver: bridge
