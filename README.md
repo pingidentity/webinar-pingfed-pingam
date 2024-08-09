@@ -60,15 +60,12 @@ To simulate a more realistic environment update the local hosts file:
     - replace **{your-current-ip-address}** with the current IP address of your computer. Do NOT use *localhost* or *127.0.0.1*
     - example: **192.168.0.12 pf.webinar.local pd.webinar.local openam.webinar.local playground.webinar.local**
 
-### Install and configure Frodo
+### Install Frodo
 
-In order to use example PingAM trees/ journeys install **Frodo-cli** and configure it:
+In order to use example PingAM trees/ journeys install **Frodo-cli**:
 
 - `brew tap rockcarver/frodo-cli`
 - `brew install frodo-cli`
-- `frodo conn add -k https://openam.webinar.local:8449/openam amAdmin 'Password1'`
-  - this adds a connection to frodo's configuration file which is stored here: **~/.frodo/Connections.json**
-  - **Note:** this step may need to be repeated after Frodo gets updated
 
 ### Create initial configuration files and private/public keys
 
@@ -137,6 +134,14 @@ Configure the products:
 - `make configure_setup`
   - imports LDIF files into PingDirectory
   - configures PingFederate and PingAM
+
+Import example PingAM journeys:
+
+- `frodo conn add -k https://openam.webinar.local:8449/openam amAdmin 'Password1'`
+  - this adds a connection to frodo's configuration file which is stored here: **~/.frodo/Connections.json**
+  - run this only the first time or after Frodo got updated
+
+- `make import_journeys`
   - imports example journeys into PingAM
 
 **Tip:** to learn how PingFederate and PingAM are configured, review the **main** method in **src/main/java/com/pingfederate/webinar/Main.java**

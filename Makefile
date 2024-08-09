@@ -27,8 +27,8 @@ configure_setup:
 	#
 	# Configure PingFederate and PingAM
 	java -jar target/setup-1.0.jar
-	#
-	# import example journeys:
+
+import_journeys:
 	#
 	# Username/Password journey
     # name = WebinarJourney
