@@ -68,6 +68,7 @@ In order to use example PingAM trees/ journeys install **Frodo-cli** and configu
 - `brew install frodo-cli`
 - `frodo conn add -k https://openam.webinar.local:8449/openam amAdmin 'Password1'`
   - this adds a connection to frodo's configuration file which is stored here: **~/.frodo/Connections.json**
+  - **Note:** this step may need to be repeated after Frodo gets updated
 
 ### Create initial configuration files and private/public keys
 
@@ -232,6 +233,11 @@ To view log files in PingFederate:
 - `docker exec -it pfwebinarlocal bash`  // the prompt is now within the running container
 - `cd /opt/pingfederate/log`
 - `ls -la`  // several log files are listed
+
+When done with the evaluation of this setup, it could be useful to remove the images as they are large in size:
+
+- `docker rmi $(docker images --filter=reference="webinar/*" -q)`
+  - any image tagged as **webinar/** will be deleted
 
 ## Links
 
