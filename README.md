@@ -6,6 +6,12 @@ The target audiences for this setup are administrators and developers who want t
 
 All products are configured via APIs call, no manual tasks are needed. This makes it very easy to get started and have the setup up and running after just a few minutes.
 
+**Overview**
+
+The environment of this setup looks like this:
+
+![alt overview](doc/simple_overview_01.png)
+
 Please read the document first before starting to set it up.
 
 **Good to know**
