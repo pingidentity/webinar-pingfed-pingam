@@ -1,5 +1,3 @@
-# Note: Please use this repo instead: https://github.com/pingidentity/webinar-pingfed-pingam
-
 # Orchestration with PingFederate, PingAM and PingDirectory
 
 This project is an example setup that leverages PingFederate, PingAM and PingDirectory to take advantage of the orchestration features that PingAM provides.
