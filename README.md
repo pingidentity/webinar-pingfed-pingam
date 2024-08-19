@@ -55,7 +55,7 @@ The setup uses these technologies throughout:
 - Maven
 - Java11
 
-**Note:** further down are instructions on how to build this setup if Java and Maven are not available!
+**Note:** further down are instructions on how to build this setup if Maven is not available!
 
 ### Update hosts file
 
@@ -108,7 +108,7 @@ The only exceptions are these:
   - builds all java code and docker images. Open the file for more details if desired
   - run this command whenever the java code or the dockerfiles have been updated
 
-**Option 2:** Java and Maven are not available:
+**Option 2:** Maven is not available:
 
 - `make build_builder`
   - this creates a docker image that contains Java and Maven
