@@ -1,4 +1,4 @@
-# Note: Please ue this repo instead: https://github.com/pingidentity/webinar-pingfed-pingam
+# Note: Please use this repo instead: https://github.com/pingidentity/webinar-pingfed-pingam
 
 # Orchestration with PingFederate, PingAM and PingDirectory
 
