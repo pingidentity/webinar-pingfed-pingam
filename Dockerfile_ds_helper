@@ -1,7 +1,7 @@
 FROM webinar/openjdk:17
 
 ARG version
-ENV build_version $version
+ENV build_version=$version
 
 COPY products/pingds/$build_version /tmp/opendj.zip
 

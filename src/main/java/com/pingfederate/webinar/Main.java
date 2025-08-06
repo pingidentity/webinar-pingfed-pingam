@@ -86,14 +86,22 @@ public class Main {
         pfAddPolicyContractGrantMapping(policyContractId);
         pfAddOauthClient();
         pfAddOidcPolicyContract();
+        pfAddTrackedHttpParameters();
+        pfAddLdapDatastore();
+        pfAddLdapPcv();
+        pfAddHtmlFormAdapter();
 
-        pfConfigurePingAmIntegrationKit("PingAMIdpAdapter", "PingAMIdpAdapterId", propsEnv.getProperty("PINGAM_JOURNEY"), null, null);
+        pfConfigurePingAmIntegrationKit("PingAMIdpAdapter", "PingAMIdpAdapterId", propsEnv.getProperty("PINGAM_JOURNEY"), null, null, false, false);
         pfAddIdpAdapterGrantMapping("PingAMIdpAdapterId");
-        pfAddIdpAuthenticationPolicy("WebinarPingAMTree", "WebinarPingAMTreeId", policyContractId, "PingAMIdpAdapterId", true);
+        pfAddIdpAuthenticationPolicy("WebinarPingAMTree", "WebinarPingAMTreeId", policyContractId, "PingAMIdpAdapterId", "Delegates username, password authentication to PingAM", true);
 
-        pfConfigurePingAmIntegrationKit("PingAMBackChannelAuthIdpAdapter", "PingAMBCAIdpAdapterId", propsEnv.getProperty("PINGAM_BACK_CHANNEL_AUTH_JOURNEY"), propsEnv.getProperty("PINGAM_BACK_CHANNEL_AUTH_CLIENT_ID"), propsEnv.getProperty("PINGAM_BACK_CHANNEL_AUTH_CLIENT_SECRET"));
+        pfConfigurePingAmIntegrationKit("PingAMBackChannelAuthIdpAdapter", "PingAMBCAIdpAdapterId", propsEnv.getProperty("PINGAM_BACK_CHANNEL_AUTH_JOURNEY"), propsEnv.getProperty("PINGAM_BACK_CHANNEL_AUTH_CLIENT_ID"), propsEnv.getProperty("PINGAM_BACK_CHANNEL_AUTH_CLIENT_SECRET"), false, true);
         pfAddIdpAdapterGrantMapping("PingAMBCAIdpAdapterId");
-        pfAddIdpAuthenticationPolicy("WebinarPingAMBCATree", "WebinarPingAMBCATreeId", policyContractId, "PingAMBCAIdpAdapterId", false);
+        pfAddIdpAuthenticationPolicy("WebinarPingAMBCATree", "WebinarPingAMBCATreeId", policyContractId, "PingAMBCAIdpAdapterId", "Forwards a given login_hint to PingAM where that user provides his password", false);
+
+        pfConfigurePingAmIntegrationKit("PingAMMfaOnlyIdpAdapter", "PingAMMfaOnlyIdpId", propsEnv.getProperty("PINGAM_MFA_JOURNEY"), propsEnv.getProperty("PINGAM_BACK_CHANNEL_AUTH_CLIENT_ID"), propsEnv.getProperty("PINGAM_BACK_CHANNEL_AUTH_CLIENT_SECRET"), true, false);
+        pfAddIdpAdapterGrantMapping("PingAMMfaOnlyIdpId");
+        pfAddMfaOnlyPolicy("WebinarMfaTree", policyContractId,"PingAMMfaOnlyIdpId", "WebinarMfaTreeId", "1. factor in PingFederate, 2. factor (OTP) in PingAM", false);
 
         LOGGER.info("PingFederate was configured successfully");
     }
@@ -173,8 +181,7 @@ public class Main {
             roles.add(AdministrativeAccount.RolesEnum.CRYPTO_ADMINISTRATOR);
             roles.add(AdministrativeAccount.RolesEnum.USER_ADMINISTRATOR);
             roles.add(AdministrativeAccount.RolesEnum.EXPRESSION_ADMINISTRATOR);
-
-            roles.add(AdministrativeAccount.RolesEnum.ADMINISTRATOR);
+            roles.add(AdministrativeAccount.RolesEnum.DATA_COLLECTION_ADMINISTRATOR);
             account.setRoles(roles);
 
             apiClient.administrativeAccountsApi().addAccount(account);
@@ -383,7 +390,7 @@ public class Main {
 
     }
 
-    private void pfAddIdpAuthenticationPolicy(String policyTreeName, String policyTreeId, String authenticationPolicyContractId, String pingAmAdapterId, boolean enabled) throws Exception {
+    private void pfAddIdpAuthenticationPolicy(String policyTreeName, String policyTreeId, String authenticationPolicyContractId, String pingAmAdapterId, String description, boolean enabled) throws Exception {
 
         /* Fail branch */
         PolicyAction failAction = new PolicyAction();
@@ -445,7 +452,7 @@ public class Main {
         tree.setId(policyTreeId);
         tree.setName(policyTreeName);
         tree.setEnabled(enabled);
-        tree.setDescription("WebinarPolicy");
+        tree.setDescription(description);
         tree.setHandleFailuresLocally(false);
         tree.setRootNode(rootNode);
 
@@ -677,7 +684,7 @@ public class Main {
         }
     }
 
-    private void pfConfigurePingAmIntegrationKit(String adapterName, String adapterId, String journey, String clientId, String clientSecret) throws IOException {
+    private void pfConfigurePingAmIntegrationKit(String adapterName, String adapterId, String journey, String clientId, String clientSecret, boolean includeSimpleParam, boolean includeAdvancedParam) throws IOException {
 
         /* Create PingAM IDP Adapter Configuration */
 
@@ -690,6 +697,45 @@ public class Main {
                         "com.pingidentity.adapters.pingam.PingAMAdapter"));
 
         PluginConfiguration pluginConfiguration = new PluginConfiguration();
+
+        ConfigField fieldSimpleUsername = new ConfigField();
+        fieldSimpleUsername.setName("Parameter Name");
+        fieldSimpleUsername.setValue("username");
+
+        ConfigField fieldSimpleSource = new ConfigField();
+        fieldSimpleSource.setName("Source");
+        fieldSimpleSource.setValue("com.pingidentity.adapter.input.parameter.userid.authenticated");
+
+        ConfigRow configSimpleRowUsername = new ConfigRow();
+        configSimpleRowUsername.addFieldsItem(fieldSimpleUsername);
+        configSimpleRowUsername.addFieldsItem(fieldSimpleSource);
+        configSimpleRowUsername.setDefaultRow(false);
+
+        ConfigTable configTableSimpleParameter = new ConfigTable();
+        configTableSimpleParameter.setName("Simple Parameter Mappings (optional)");
+        configTableSimpleParameter.addRowsItem(configSimpleRowUsername);
+
+        ConfigField fieldAdvancedUsername = new ConfigField();
+        fieldAdvancedUsername.setName("Parameter Name");
+        fieldAdvancedUsername.setValue("username");
+
+        ConfigField fieldAdvancedSourceType = new ConfigField();
+        fieldAdvancedSourceType.setName("Source Type");
+        fieldAdvancedSourceType.setValue("com.pingidentity.adapter.tracked.http.request.params");
+
+        ConfigField fieldAdvancedSourceParam = new ConfigField();
+        fieldAdvancedSourceParam.setName("Source Parameter");
+        fieldAdvancedSourceParam.setValue("login_hint");
+
+        ConfigRow configAdvancedRowUsername = new ConfigRow();
+        configAdvancedRowUsername.addFieldsItem(fieldAdvancedUsername);
+        configAdvancedRowUsername.addFieldsItem(fieldAdvancedSourceType);
+        configAdvancedRowUsername.addFieldsItem(fieldAdvancedSourceParam);
+        configAdvancedRowUsername.setDefaultRow(false);
+
+        ConfigTable configTableAdvancedParameter = new ConfigTable();
+        configTableAdvancedParameter.setName("Advanced Parameter Mappings (optional)");
+        configTableAdvancedParameter.addRowsItem(configAdvancedRowUsername);
 
         ConfigField fieldSessionIdLocal = new ConfigField();
         fieldSessionIdLocal.setName("Local Attribute");
@@ -722,6 +768,12 @@ public class Main {
         configTable.addRowsItem(configRowSession);
         configTable.addRowsItem(configRowRealm);
 
+        if (includeSimpleParam) {
+            pluginConfiguration.addTablesItem(configTableSimpleParameter);
+        } else if (includeAdvancedParam) {
+            pluginConfiguration.addTablesItem(configTableAdvancedParameter);
+        }
+
         pluginConfiguration.addTablesItem(configTable);
 
         ConfigField pingAmBaseUrl = new ConfigField();
@@ -745,12 +797,12 @@ public class Main {
         pluginConfiguration.addFieldsItem(pingAmJourney);
         pluginConfiguration.addFieldsItem(pingAmJourneyCookie);
 
-        if(clientId != null) {
+        if (clientId != null) {
             ConfigField pingAmClientId = new ConfigField();
             pingAmClientId.setName("Client ID");
             pingAmClientId.setValue(clientId);
             pluginConfiguration.addFieldsItem(pingAmClientId);
-            if(clientSecret != null) {
+            if (clientSecret != null) {
                 ConfigField pingAmClientSecret = new ConfigField();
                 pingAmClientSecret.setName("Client Secret");
                 pingAmClientSecret.setValue(clientSecret);
@@ -780,14 +832,251 @@ public class Main {
         attrFulfilUsername.setValue(propsEnv.getProperty("PINGAM_USERNAME_ATTR"));
         stringAttributeFulfillmentValueMap.put(propsEnv.getProperty("PINGAM_USERNAME_ATTR"), attrFulfilUsername);
         idpAdapterContractMapping.setAttributeContractFulfillment(stringAttributeFulfillmentValueMap);
+
         adapter.setAttributeMapping(idpAdapterContractMapping);
 
         apiClient.idpadaptersApi().createIdpAdapter(adapter, true);
 
     }
 
-    // https://docs.pingidentity.com/pingam/8/eval-guide/step-3-deploy-am.html
-    // https://docs.pingidentity.com/pingam/7.5/reference/man-configurator-jar-1.html
+    private void pfAddLdapDatastore() throws IOException {
+        LdapDataStore ldap = new LdapDataStore();
+        ldap.setType(DataStore.TypeEnum.LDAP);
+        ldap.setId("WebinarLdapId");
+        ldap.addHostnamesItem(String.format("%s:636", propsEnv.getProperty("HOSTNAME_PD")));
+        ldap.setLdapType(LdapDataStore.LdapTypeEnum.PING_DIRECTORY);
+        ldap.setUserDN("cn=administrator");
+        ldap.setPassword("Password1");
+        ldap.setUseSsl(true);
+        ldap.setName("WebinarLdap");
+
+        LdapTagConfig ldapTagConfig = new LdapTagConfig();
+        ldapTagConfig.addHostnamesItem(String.format("%s:636", propsEnv.getProperty("HOSTNAME_PD")));
+        ldapTagConfig.setDefaultSource(true);
+        ldap.addHostnamesTagsItem(ldapTagConfig);
+
+        apiClient.dataStoresApi().createDataStore(ldap, false);
+    }
+
+    private void pfAddLdapPcv() throws IOException {
+        PasswordCredentialValidator pcv = new PasswordCredentialValidator();
+        pcv.setId("WebinarLdapPCVId");
+        pcv.setName("WebinarLdapPCV");
+        pcv.setPluginDescriptorRef(
+                createResourceLink(baseUrl,
+                        "/idp/adapters/descriptors",
+                        "org.sourceid.saml20.domain.LDAPUsernamePasswordCredentialValidator"));
+
+        PluginConfiguration pluginConfiguration = new PluginConfiguration();
+        pluginConfiguration.setTables(new ArrayList<>());
+
+        ConfigField datastoreField = new ConfigField();
+        datastoreField.setName("LDAP Datastore");
+        datastoreField.setValue("WebinarLdapId");
+
+        ConfigField searchBaseField = new ConfigField();
+        searchBaseField.setName("Search Base");
+        searchBaseField.setValue("dc=pingdirectory,dc=local");
+
+        ConfigField searchFilterField = new ConfigField();
+        searchFilterField.setName("Search Filter");
+        searchFilterField.setValue("uid=${username}");
+
+        pluginConfiguration.addFieldsItem(datastoreField);
+        pluginConfiguration.addFieldsItem(searchBaseField);
+        pluginConfiguration.addFieldsItem(searchFilterField);
+
+        pcv.setConfiguration(pluginConfiguration);
+
+        apiClient.passwordCredentialValidatorsApi().createPasswordCredentialValidator(pcv);
+    }
+
+    private void pfAddHtmlFormAdapter() throws IOException {
+
+        IdpAdapter adapter = new IdpAdapter();
+        adapter.setName("WebinarHtmlFormAdapter");
+        adapter.setId("WebinarHtmlFormAdapterId");
+        adapter.setPluginDescriptorRef(
+                createResourceLink(baseUrl,
+                        "/idp/adapters/descriptors",
+                        "com.pingidentity.adapters.htmlform.idp.HtmlFormIdpAuthnAdapter"));
+
+        PluginConfiguration pluginConfiguration = new PluginConfiguration();
+
+        ConfigField pcv = new ConfigField();
+        pcv.setName("Password Credential Validator Instance");
+        pcv.setValue("WebinarLdapPCVId");
+
+        ConfigRow configRowPcv = new ConfigRow();
+        configRowPcv.addFieldsItem(pcv);
+        configRowPcv.setDefaultRow(false);
+
+        ConfigTable configTable = new ConfigTable();
+        configTable.setName("Credential Validators");
+        configTable.addRowsItem(configRowPcv);
+
+        pluginConfiguration.addTablesItem(configTable);
+        pluginConfiguration.setFields(new ArrayList<>());
+
+        adapter.setConfiguration(pluginConfiguration);
+
+        IdpAdapterAttributeContract idpAdapterAttributeContract = new IdpAdapterAttributeContract();
+
+        IdpAdapterAttribute policyActionAttribute = new IdpAdapterAttribute();
+        policyActionAttribute.setName("policy.action");
+        policyActionAttribute.setMasked(false);
+        policyActionAttribute.setPseudonym(false);
+
+        IdpAdapterAttribute usernameAttribute = new IdpAdapterAttribute();
+        usernameAttribute.setName("username");
+        usernameAttribute.setMasked(false);
+        usernameAttribute.setPseudonym(true);
+
+        idpAdapterAttributeContract.addCoreAttributesItem(policyActionAttribute);
+        idpAdapterAttributeContract.addCoreAttributesItem(usernameAttribute);
+
+        idpAdapterAttributeContract.setUniqueUserKeyAttribute("username");
+        adapter.setAttributeContract(idpAdapterAttributeContract);
+
+        IdpAdapterContractMapping idpAdapterContractMapping = new IdpAdapterContractMapping();
+        idpAdapterContractMapping.setAttributeSources(new ArrayList<>());
+        Map<String, AttributeFulfillmentValue> stringAttributeFulfillmentValueMap = new HashMap<>();
+        AttributeFulfillmentValue policyAction = new AttributeFulfillmentValue();
+        SourceTypeIdKey policyActionSource = new SourceTypeIdKey();
+        policyActionSource.setType(SourceTypeIdKey.TypeEnum.ADAPTER);
+        policyAction.setSource(policyActionSource);
+        policyAction.setValue("policy.action");
+        stringAttributeFulfillmentValueMap.put("policy.action", policyAction);
+
+        AttributeFulfillmentValue username = new AttributeFulfillmentValue();
+        SourceTypeIdKey usernameSource = new SourceTypeIdKey();
+        usernameSource.setType(SourceTypeIdKey.TypeEnum.ADAPTER);
+        username.setSource(usernameSource);
+        username.setValue("username");
+        stringAttributeFulfillmentValueMap.put("username", username);
+        idpAdapterContractMapping.setAttributeContractFulfillment(stringAttributeFulfillmentValueMap);
+        adapter.setAttributeMapping(idpAdapterContractMapping);
+
+        apiClient.idpadaptersApi().createIdpAdapter(adapter, true);
+
+    }
+
+    private void pfAddMfaOnlyPolicy(String policyTreeName, String authenticationPolicyContractId, String pingAmAdapterId, String policyTreeId, String description, boolean enabled) throws Exception {
+
+        /* Fail branch */
+        PolicyAction failAction = new PolicyAction();
+        failAction.setType(PolicyAction.TypeEnum.DONE);
+        failAction.setContext("Fail");
+
+        AuthenticationPolicyTreeNode failNode = new AuthenticationPolicyTreeNode();
+        failNode.setAction(failAction);
+
+        /* PingAM node */
+        AuthenticationPolicyTreeNode pingAmNode = new AuthenticationPolicyTreeNode();
+        AuthnSourcePolicyAction pingAmNodeAction = new AuthnSourcePolicyAction();
+        pingAmNodeAction.setType(PolicyAction.TypeEnum.AUTHN_SOURCE);
+        pingAmNodeAction.setContext("Success");
+        AuthenticationSource authenticationSource = new AuthenticationSource();
+        authenticationSource.setType(AuthenticationSource.TypeEnum.ADAPTER);
+        authenticationSource.setSourceRef(createResourceLink(
+                baseUrl,
+                "/idp/adapters",
+                pingAmAdapterId)
+        );
+        pingAmNodeAction.setAuthenticationSource(authenticationSource);
+
+        AttributeFulfillmentValue attributeFulfillmentValue = new AttributeFulfillmentValue();
+        SourceTypeIdKey usernameSource = new SourceTypeIdKey();
+        usernameSource.setType(SourceTypeIdKey.TypeEnum.ADAPTER);
+        usernameSource.setId("WebinarHtmlFormAdapterId");
+        attributeFulfillmentValue.setSource(usernameSource);
+        attributeFulfillmentValue.setValue("username");
+        pingAmNodeAction.setInputUserIdMapping(attributeFulfillmentValue);
+        pingAmNodeAction.setUserIdAuthenticated(true);
+
+        pingAmNode.setAction(pingAmNodeAction);
+        pingAmNode.addChildrenItem(failNode);
+
+        /* APC mapping node */
+        AuthenticationPolicyTreeNode apcMappingNode = new AuthenticationPolicyTreeNode();
+        ApcMappingPolicyAction apcMappingAction = new ApcMappingPolicyAction();
+        apcMappingAction.setType(PolicyAction.TypeEnum.APC_MAPPING);
+        apcMappingAction.setContext("Success");
+        apcMappingAction.setAuthenticationPolicyContractRef(
+                createResourceLink(
+                        baseUrl,
+                        "/authenticationPolicyContracts",
+                        authenticationPolicyContractId)
+        );
+        AttributeMapping subjectMapping = new AttributeMapping();
+        subjectMapping.setAttributeSources(new ArrayList<>());
+        Map<String, AttributeFulfillmentValue> fulfillmentValueMap = new HashMap<>();
+        AttributeFulfillmentValue subject = new AttributeFulfillmentValue();
+        SourceTypeIdKey subjectSource = new SourceTypeIdKey();
+        subjectSource.setType(SourceTypeIdKey.TypeEnum.ADAPTER);
+        subjectSource.setId("WebinarHtmlFormAdapterId");
+        subject.setSource(subjectSource);
+        subject.setValue("username");
+        fulfillmentValueMap.put("subject", subject);
+        subjectMapping.setAttributeContractFulfillment(fulfillmentValueMap);
+        subjectMapping.setIssuanceCriteria(new IssuanceCriteria());
+        apcMappingAction.setAttributeMapping(subjectMapping);
+        apcMappingNode.setAction(apcMappingAction);
+
+        pingAmNode.addChildrenItem(apcMappingNode);
+
+        /* Root node */
+        AuthenticationPolicyTreeNode rootNode = new AuthenticationPolicyTreeNode();
+        AuthnSourcePolicyAction htmlFormAdapterAction = new AuthnSourcePolicyAction();
+        htmlFormAdapterAction.setType(PolicyAction.TypeEnum.AUTHN_SOURCE);
+        AuthenticationSource htmlFormAdapterSource = new AuthenticationSource();
+        htmlFormAdapterSource.setType(AuthenticationSource.TypeEnum.ADAPTER);
+        htmlFormAdapterSource.setSourceRef(createResourceLink(
+                baseUrl,
+                "/idp/adapters",
+                "WebinarHtmlFormAdapterId")
+        );
+        htmlFormAdapterAction.setAuthenticationSource(htmlFormAdapterSource);
+        rootNode.setAction(htmlFormAdapterAction);
+        rootNode.addChildrenItem(failNode);
+        rootNode.addChildrenItem(pingAmNode);
+
+        AuthenticationPolicyTree tree = new AuthenticationPolicyTree();
+        tree.setId(policyTreeId);
+        tree.setName(policyTreeName);
+        tree.setDescription(description);
+        tree.setEnabled(enabled);
+        tree.setRootNode(rootNode);
+        tree.setHandleFailuresLocally(false);
+
+        AuthenticationPolicy policy = new AuthenticationPolicy();
+        policy.addAuthnSelectionTreesItem(tree);
+
+        String policyString = new ObjectMapper().writeValueAsString(tree);
+        policyString = policyString.replaceAll("\"type\":[\\\\s]{0,3}\"ApcMappingPolicyAction\",", "");
+        policyString = policyString.replaceAll("\"type\":[\\\\s]{0,3}\"AuthnSourcePolicyAction\",", "");
+        policyString = policyString.replaceAll("\"attributeRules\":[\\\\s]{0,3}null,", "");
+        policyString = policyString.replaceAll("\"type\":[\\\\s]{0,3}\"PolicyAction\",", "");
+
+        apiHelper.postPf(baseUrl, "/authenticationPolicies/policy", (JSONObject) new JSONParser().parse(policyString), new ArrayList<>());
+    }
+
+    private void pfAddTrackedHttpParameters() throws Exception {
+        String trackedParam = propsEnv.getProperty("PF_POLICY_TRACKED_PARAMETERS");
+        if ((trackedParam != null) && !"".equalsIgnoreCase(trackedParam)) {
+            List<Header> headers = new ArrayList<>();
+            JSONObject resp = apiHelper.getPf(baseUrl, "/authenticationPolicies/default", headers);
+            JSONArray tp = (JSONArray) resp.get("trackedHttpParameters");
+            for (String next : trackedParam.split("[,; ]")) {
+                tp.add(next);
+            }
+            apiHelper.putPf(baseUrl, "/authenticationPolicies/default", resp, headers);
+        }
+    }
+
+// https://docs.pingidentity.com/pingam/8/eval-guide/step-3-deploy-am.html
+// https://docs.pingidentity.com/pingam/7.5/reference/man-configurator-jar-1.html
+
     private void pingAmCreateAdminAndConfig() throws Exception {
 
         String basicPath = propsEnv.getProperty("PINGAM_BASE_URL");
@@ -1148,6 +1437,7 @@ public class Main {
 
     /**
      * Find the existing script assertion that extract user attributes from LDAP and update it to lookup the attributes defined in .env
+     *
      * @throws Exception
      */
     private void pingAmUpdateScriptNode() throws Exception {

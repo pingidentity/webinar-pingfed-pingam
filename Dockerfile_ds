@@ -7,12 +7,12 @@ ARG hostname
 ARG sslpwd
 ARG truststorepwd
 
-ENV build_version $version
-ENV deployment_id $deploymentid
-ENV deployment_pwd $deploymentpwd
-ENV local_hostname $hostname
-ENV ssl_pwd $sslpwd
-ENV truststore_pwd $truststorepwd
+ENV build_version=$version
+ENV deployment_id=$deploymentid
+ENV deployment_pwd=$deploymentpwd
+ENV local_hostname=$hostname
+ENV ssl_pwd=$sslpwd
+ENV truststore_pwd=$truststorepwd
 
 COPY products/pingds/$build_version /tmp/opendj.zip
 
@@ -29,15 +29,6 @@ RUN chmod 644 /opt/ssl/tlskey.p12
 # More info on setup:
 # - https://backstage.forgerock.com/docs/ds/8/install-guide/profile-am-config.html
 # - https://docs.pingidentity.com/pingds/8/install-guide/setup-parameters.html
-# Bind DN: uid=am-config,ou=admins,ou=am-config
-# User Name: uid=admin/ Password1
-#
-#     --replicationPort 8989 \
-#     --serverId WebinarDS \
-# \
-#    --replicationPort 8989 \
-#    --bootstrapReplicationServer $local_hostname:8989 \
-#    --serverId WebinarDS
 #
 RUN /opt/opendj/setup \
     --instancePath /opt/opendj \

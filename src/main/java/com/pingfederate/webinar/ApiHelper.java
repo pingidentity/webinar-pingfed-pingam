@@ -60,6 +60,12 @@ public class ApiHelper {
         this.pingAmPassword = pingAmPassword;
     }
 
+    public JSONObject getPf(String basePath, String path, List<Header> headers) throws Exception {
+        headers.add(new BasicHeader("X-XSRF-Header", "PingFederate"));
+        headers.add(new BasicHeader("Authorization", String.format("Basic %s", Base64.getEncoder().encodeToString(String.format("%s:%s", pfUsername, pfUserPassword).getBytes()))));
+        return any(headers, pfApiBuilder, new HttpGet(String.format("%s%s", basePath, path)));
+    }
+
     public JSONObject postPf(String basePath, String path, JSONObject payload, List<Header> headers) throws Exception {
         return anyPf(payload, headers, new HttpPost(String.format("%s%s", basePath, path)));
     }

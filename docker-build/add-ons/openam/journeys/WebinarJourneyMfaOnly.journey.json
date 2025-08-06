@@ -1,0 +1,275 @@
+{
+  "circlesOfTrust": {},
+  "emailTemplates": {},
+  "innerNodes": {},
+  "meta": {
+    "exportDate": "2025-06-11T17:16:41.733Z",
+    "exportTool": "frodo",
+    "exportToolVersion": "v3.1.0 [v20.18.0]",
+    "exportedBy": "amAdmin",
+    "origin": "https://openam.webinar.local:8449/openam",
+    "originAmVersion": "8.0.1"
+  },
+  "nodes": {
+    "02ace37e-5e28-41fa-a8f2-f4a7a1d228ab": {
+      "_id": "02ace37e-5e28-41fa-a8f2-f4a7a1d228ab",
+      "_outcomes": [
+        {
+          "displayName": "Success",
+          "id": "successOutcome"
+        },
+        {
+          "displayName": "Failure",
+          "id": "failureOutcome"
+        }
+      ],
+      "_type": {
+        "_id": "OathRegistrationNode",
+        "collection": true,
+        "name": "OATH Registration"
+      },
+      "accountName": "USERNAME",
+      "addChecksum": false,
+      "algorithm": "TOTP",
+      "bgColor": "032b75",
+      "generateRecoveryCodes": true,
+      "issuer": "ForgeRock",
+      "minSharedSecretLength": 32,
+      "passwordLength": "SIX_DIGITS",
+      "postponeDeviceProfileStorage": false,
+      "scanQRCodeMessage": {},
+      "totpHashAlgorithm": "HMAC_SHA1",
+      "totpTimeInterval": 30,
+      "truncationOffset": -1
+    },
+    "18e3591e-a36d-4b80-acd0-324dff28e338": {
+      "_id": "18e3591e-a36d-4b80-acd0-324dff28e338",
+      "_outcomes": [
+        {
+          "displayName": "Outcome",
+          "id": "outcome"
+        }
+      ],
+      "_type": {
+        "_id": "GetAuthenticatorAppNode",
+        "collection": true,
+        "name": "Get Authenticator App"
+      },
+      "appleLink": "https://itunes.apple.com/app/forgerock-authenticator/id1038442926",
+      "continueLabel": {},
+      "googleLink": "https://play.google.com/store/apps/details?id=com.forgerock.authenticator",
+      "message": {}
+    },
+    "3a0635ef-56ff-4249-baa5-fb044f62bbe1": {
+      "_id": "3a0635ef-56ff-4249-baa5-fb044f62bbe1",
+      "_outcomes": [
+        {
+          "displayName": "Success",
+          "id": "successOutcome"
+        },
+        {
+          "displayName": "Failure",
+          "id": "failureOutcome"
+        },
+        {
+          "displayName": "Not registered",
+          "id": "notRegisteredOutcome"
+        }
+      ],
+      "_type": {
+        "_id": "OathTokenVerifierNode",
+        "collection": true,
+        "name": "OATH Token Verifier"
+      },
+      "algorithm": "TOTP",
+      "hotpWindowSize": 100,
+      "isRecoveryCodeAllowed": false,
+      "maximumAllowedClockDrift": 5,
+      "totpHashAlgorithm": "HMAC_SHA1",
+      "totpTimeInterval": 30,
+      "totpTimeSteps": 2
+    },
+    "3d90a3bd-2a4c-4b39-922b-9b6f6c1c6459": {
+      "_id": "3d90a3bd-2a4c-4b39-922b-9b6f6c1c6459",
+      "_outcomes": [
+        {
+          "displayName": "true",
+          "id": "true"
+        }
+      ],
+      "_type": {
+        "_id": "ScriptedDecisionNode",
+        "collection": true,
+        "name": "Script - WebinarBackChannelAuthProperties"
+      },
+      "inputs": [
+        "*"
+      ],
+      "outcomes": [
+        "true"
+      ],
+      "outputs": [
+        "*"
+      ],
+      "script": "dcad7e46-0c56-4d35-8235-345ef8625513"
+    },
+    "70a757ca-563d-408d-bc53-dd8769211bdb": {
+      "_id": "70a757ca-563d-408d-bc53-dd8769211bdb",
+      "_outcomes": [
+        {
+          "displayName": "Retry",
+          "id": "Retry"
+        },
+        {
+          "displayName": "Reject",
+          "id": "Reject"
+        }
+      ],
+      "_type": {
+        "_id": "RetryLimitDecisionNode",
+        "collection": true,
+        "name": "Retry Limit Decision"
+      },
+      "incrementUserAttributeOnFailure": true,
+      "retryLimit": 3
+    },
+    "b9675569-8e12-494f-ad42-2ee2e66d5685": {
+      "_id": "b9675569-8e12-494f-ad42-2ee2e66d5685",
+      "_outcomes": [
+        {
+          "displayName": "Register",
+          "id": "registerOutcome"
+        },
+        {
+          "displayName": "Get App",
+          "id": "getAppOutcome"
+        },
+        {
+          "displayName": "Skip",
+          "id": "skipOutcome"
+        },
+        {
+          "displayName": "Opt-out",
+          "id": "optOutOutcome"
+        }
+      ],
+      "_type": {
+        "_id": "MultiFactorRegistrationOptionsNode",
+        "collection": true,
+        "name": "MFA Registration Options"
+      },
+      "getApp": true,
+      "getAppLabel": {},
+      "mandatory": false,
+      "message": {},
+      "optOutLabel": {},
+      "registerDeviceLabel": {},
+      "skipStepLabel": {}
+    }
+  },
+  "saml2Entities": {},
+  "scripts": {
+    "dcad7e46-0c56-4d35-8235-345ef8625513": {
+      "_id": "dcad7e46-0c56-4d35-8235-345ef8625513",
+      "context": "AUTHENTICATION_TREE_DECISION_NODE",
+      "createdBy": "id=amAdmin,ou=user,ou=am-config",
+      "creationDate": 1749658736029,
+      "default": false,
+      "description": "A simple script that collects the username that was given via a back channel authentication request.",
+      "evaluatorVersion": "1.0",
+      "language": "JAVASCRIPT",
+      "lastModifiedBy": "id=amAdmin,ou=user,ou=am-config",
+      "lastModifiedDate": 1749658736029,
+      "name": "WebinarBackChannelAuthProperties",
+      "script": "\"/*\\n  - A simple script that collects the username that was given via a back channel authentication request.\\n  - The script should set outcome to either \\\"true\\\" or \\\"false\\\".\\n */\\nvar username = nodeState.get(\\\"username\\\");\\n\\nlogger.error(\\\"The username is {}\\\", username);\\n\\noutcome = \\\"true\\\";\""
+    }
+  },
+  "socialIdentityProviders": {},
+  "themes": [],
+  "tree": {
+    "_id": "WebinarJourneyMfaOnly",
+    "enabled": true,
+    "entryNodeId": "3d90a3bd-2a4c-4b39-922b-9b6f6c1c6459",
+    "innerTreeOnly": false,
+    "mustRun": false,
+    "noSession": false,
+    "nodes": {
+      "02ace37e-5e28-41fa-a8f2-f4a7a1d228ab": {
+        "connections": {
+          "failureOutcome": "e301438c-0bd0-429c-ab0c-66126501069a",
+          "successOutcome": "3a0635ef-56ff-4249-baa5-fb044f62bbe1"
+        },
+        "displayName": "OATH Registration",
+        "nodeType": "OathRegistrationNode",
+        "x": 763.53125,
+        "y": 31
+      },
+      "18e3591e-a36d-4b80-acd0-324dff28e338": {
+        "connections": {
+          "outcome": "b9675569-8e12-494f-ad42-2ee2e66d5685"
+        },
+        "displayName": "Get Authenticator App",
+        "nodeType": "GetAuthenticatorAppNode",
+        "x": 763.53125,
+        "y": 143
+      },
+      "3a0635ef-56ff-4249-baa5-fb044f62bbe1": {
+        "connections": {
+          "failureOutcome": "70a757ca-563d-408d-bc53-dd8769211bdb",
+          "notRegisteredOutcome": "b9675569-8e12-494f-ad42-2ee2e66d5685",
+          "successOutcome": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+        },
+        "displayName": "OATH Token Verifier",
+        "nodeType": "OathTokenVerifierNode",
+        "x": 334.796875,
+        "y": 89.5
+      },
+      "3d90a3bd-2a4c-4b39-922b-9b6f6c1c6459": {
+        "connections": {
+          "true": "3a0635ef-56ff-4249-baa5-fb044f62bbe1"
+        },
+        "displayName": "Scripted Decision",
+        "nodeType": "ScriptedDecisionNode",
+        "x": 152.078125,
+        "y": 120.5
+      },
+      "70a757ca-563d-408d-bc53-dd8769211bdb": {
+        "connections": {
+          "Reject": "e301438c-0bd0-429c-ab0c-66126501069a",
+          "Retry": "3a0635ef-56ff-4249-baa5-fb044f62bbe1"
+        },
+        "displayName": "Retry Limit Decision",
+        "nodeType": "RetryLimitDecisionNode",
+        "x": 530.75,
+        "y": 171
+      },
+      "b9675569-8e12-494f-ad42-2ee2e66d5685": {
+        "connections": {
+          "getAppOutcome": "18e3591e-a36d-4b80-acd0-324dff28e338",
+          "optOutOutcome": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+          "registerOutcome": "02ace37e-5e28-41fa-a8f2-f4a7a1d228ab",
+          "skipOutcome": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+        },
+        "displayName": "MFA Registration Options",
+        "nodeType": "MultiFactorRegistrationOptionsNode",
+        "x": 530.75,
+        "y": 25
+      }
+    },
+    "staticNodes": {
+      "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+        "x": 763.53125,
+        "y": 210
+      },
+      "e301438c-0bd0-429c-ab0c-66126501069a": {
+        "x": 975.5625,
+        "y": 120.5
+      },
+      "startNode": {
+        "x": 50,
+        "y": 120.5
+      }
+    },
+    "uiConfig": {}
+  }
+}

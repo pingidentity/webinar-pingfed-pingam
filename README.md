@@ -1,6 +1,6 @@
-# Orchestration with PingFederate, PingAM and PingDirectory
+# Orchestration with PingFederate, PingAM, PingDirectory and PingDS
 
-This project is an example setup that leverages PingFederate, PingAM and PingDirectory to take advantage of the orchestration features that PingAM provides.
+This project is an example setup that takes advantage of the orchestration features that PingAM provides.
 
 The target audiences for this setup are administrators and developers who want to understand more about this configuration and run it on-prem or in a private cloud.
 
@@ -10,7 +10,7 @@ All products are configured via APIs call, no manual tasks are needed. This make
 
 The environment of this setup looks like this:
 
-![alt overview](doc/simple_overview_01.png)
+![alt overview](doc/simple_overview_02.png)
 
 Please read the document first before starting to set it up.
 
@@ -25,8 +25,8 @@ This webinar uses the following products and integration kits:
 
 **Products:**
 
-- PingFederate 12.2
-- PingDirectory 10.2
+- PingFederate 12.3
+- PingDirectory 10.3
 - PingAM 8.0.1
 - PingDS 8.0
 
@@ -84,7 +84,7 @@ In the current directory, open a terminal and run these commands:
   - the first time execution may display an error *mv: rename .env to dev/.env.bak: No such file or directory* which can be ignored
 - `sh initialize-dev-tls-keypair.sh`
   - generates a keystore for this setup. Find generated files in **./dev**
-- the same keystore is used by PingFederate, PingAM, PingDirectory and PingDS
+  - the same keystore is used by PingFederate, PingAM, PingDirectory and PingDS
   - the first time execution may display an error *mv: rename ./dev/tlskey.p12 to ./dev/tlskey.p12.bak: No such file or directory* which can be ignored
 
 ## Build the setup
@@ -99,6 +99,7 @@ The only exceptions are these:
 
 - update the file to configure and register an oauth client in PingFederate
 - update the file to use the journey **WebinarJourneySNS** which requires AWS SNS credentials
+  - this feature requires PingAM to be accessible from the internet
 
 ### Compile code and build docker images
 
@@ -107,10 +108,12 @@ The only exceptions are these:
   - these are used later
   - this has to be executed only once
 
+To build the java code, two options are available:
+
 **Option 1:** Java and Maven are available:
 
 - `make build_all`
-  - builds all java code and docker images. Open the file for more details if desired
+  - builds all java code and docker images
 
 **Option 2:** Maven is not available:
 
@@ -120,7 +123,7 @@ The only exceptions are these:
 - `make build_all_builder`
   - the same as **make build_all**, but it uses the builder image to compile the code
 
-**Tip:** Wherever **make** is used, have a look into **Makefile** to learn more about the details of that task.
+**Tip:** Wherever **make** is used, have a look into **Makefile** to learn more about the details.
 
 As temporary docker images have been built, remove them by running this:
 
@@ -150,7 +153,7 @@ Execute the next command whenever the setup was restarted:
   - this configures all products
   - run this in a separate terminal
 
-Execute this once:
+Execute this once (the first time):
 
 - `frodo conn add -k https://openam.webinar.local:8449/openam amAdmin 'Password1'`
   - It adds a connection for frodo and saves it here: **~/.frodo/Connections.json**
@@ -159,9 +162,11 @@ Execute this once:
 Execute the next command whenever the setup was restarted:
 
 - `make import_journeys`
-  - this imports 5 example journeys into PingAM
+  - this imports example journeys into PingAM
 
-All journeys can be found here after they have been imported and their names start with **Webinar**:
+PingFederate and PingAM are now ready to be used. Find the admin URLs and usernames/ passwords in *docker-compose.yml*.
+
+All journeys can be found here after they have been imported; their names start with **Webinar**:
 
 - https://openam.webinar.local:8449/openam
 - realm **webinar**  // the realm you configured in .env (PINGAM_REALM)
@@ -177,7 +182,7 @@ Once done with this setup stop it by running the following in the active termina
 
 ## Try out a journey
 
-In this setup PingAM is connected to PingDirectory which includes 10 test users.
+In this setup PingAM and PingFederate are connected to PingDirectory which includes 10 test users.
 
 The usernames and passwords follow this pattern:
 
@@ -185,13 +190,23 @@ The usernames and passwords follow this pattern:
 - **user.2/ password**
 - **...**
 
+### Provided example journeys
+
+This setup comes with different PingFederate policies and PingAM journeys
+
+|PingFederate policy| IDP Adapter| Description                                                                                                                                                                                                                                                            | Notes|
+|-------------------|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------|
+|WebinarPingAMTree|PingAMIdpAdapter| PingFederate delegates authentication to PingAM. The adapter is configured to execute this journey in PingAM: **WebinarJourney**. This is the defautl policy and is active| Update the adapter configuration to execute other journeys. Choose from these: **WebinarJourneyOAthPush**, **WebinarJourneyWebAuthN** |
+|WebinarPingAMBCATree|PingAMBackChannelAuthIdpAdapter| Use this with an authorization code flow that includes the parameter *login_hint*. PingFederate forwards the value to PingAM where the user has to provide his password. The adapter is configured to execute this journey in PingAM: **WebinarJourneyBackChannelAuth** ||
+|WebinarMfaTree|PingAMMfaOnlyIdpAdapter| The user gets authenticated in PingFederate via the HTMLFormAdapter. Afterwards, the user is redirected to PingAM where an OTP based MFA flow is executed. The adapter is configured to execute this journey in PingAM: **WebinarJourneyMfaOnly**                      ||
+
+**Tip:** Enable/ disable the policy you want to try out.
+
 ### Using an OAuth client
 
 If you have configured an oauth client in **.env** open your client and select the **Login** button or whatever it may be that initiates an authorization_code flow.
 
-PingFederate will redirect to PingAM where the user is taken through the configured journey.
-
-After successful authentication the user gets redirected back to PingFederate and then back to the oauth client.
+PingFederate will execute the configured policy.
 
 **Tip:** To install and use **OAuthPlayground** (which is a test/ demo OAuth client) follow these instructions:
 
@@ -233,7 +248,7 @@ If you wonder what docker images have been built throughout this setup, run this
 - `docker images | grep webinar`  // the result includes the images IDs
 - `docker rmi {image_id} {image_id} ...`  // use this to remove the images
 
-If the build process fails, due to missing resources, try these:
+If the build process fails, due to missing resources, try these first:
 
 - `docker rmi $(docker images -f "dangling=true" -q)`
 - `docker builder prune`
@@ -258,7 +273,7 @@ To view log files in PingFederate:
 - `cd /opt/pingfederate/log`
 - `ls -la`  // several log files are listed
 
-When done with the evaluation of this setup, it could be useful to remove the images as they are large in size:
+When done with the evaluation of this setup it could be useful to remove the images as they are large in size:
 
 - `docker rmi $(docker images --filter=reference="webinar/*" -q)`
   - any image tagged as **webinar/** will be deleted

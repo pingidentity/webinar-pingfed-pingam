@@ -1,4 +1,4 @@
-# PingAM
+# PingDS
 
 Place the PingDS 8.0 zip file in this directory.
 

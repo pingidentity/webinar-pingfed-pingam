@@ -15,13 +15,17 @@ build_java:
 	mvn clean package
 
 build_docker_pf:
-	docker build --no-cache --tag webinar/pf:latest --build-arg version=pingfederate-12.2.0.zip --no-cache  -f Dockerfile_pf .
+	docker build --no-cache --tag webinar/pf:latest --build-arg version=pingfederate-12.3.0.zip --no-cache  -f Dockerfile_pf .
 
 build_docker_am:
 	docker build --no-cache --tag webinar/openam:latest --build-arg version=AM-8.0.1.war -f Dockerfile_am .
 
 build_docker_pd:
-	docker build --no-cache  --tag webinar/pd:latest --build-arg version=PingDirectory-10.2.0.1.zip --build-arg hostname=$(shell cat .env | grep HOSTNAME_PD) -f Dockerfile_pd .
+	docker build --no-cache  --tag webinar/pd:latest \
+	--build-arg version=PingDirectory-10.3.0.0.zip \
+	--build-arg hostname=$(shell cat .env | grep HOSTNAME_PD) \
+	--build-arg sslpwd=$(shell cat .env | grep SSL_PWD | sed -e "s/SSL_PWD=//g") \
+	-f Dockerfile_pd .
 
 build_docker_ds:
 	docker build --no-cache --tag webinar/ds:latest \
@@ -79,27 +83,32 @@ configure_setup:
 # Once PingAM  (openam) is up and running, this task imports example journeys
 #
 import_journeys:
-	# Username/Password journey
     # name = WebinarJourney
+	# Username/Password journey
     # this is the default journey that PingFederate invokes
-    # this is configured in **.env**
+    # the name is configured in **.env** (PINGAM_JOURNEY)
 	frodo journey import -k -f docker-build/add-ons/openam/journeys/WebinarJourney.journey.json /openam $(shell cat .env | grep PINGAM_REALM | cut -d= -f2-)
 	#
-	# OATH journey (Push): this option has no dependencies to external services and is easy to execute. Nevertheless, it requires the ForgeRock Authenticator app
 	# name = WebinarJourneyOAthPush
+	# OATH journey (Push): this option has no dependencies to external services and is easy to execute. Nevertheless, it requires the ForgeRock Authenticator app
 	frodo journey import -k -f docker-build/add-ons/openam/journeys/WebinarJourneyOAthPush.journey.json /openam $(shell cat .env | grep PINGAM_REALM | cut -d= -f2-)
 	#
-	# AWS SNS journey (Push)**: for this to work PingAM needs to be accessible via the internet
 	# name = WebinarJourneySNS
+	# AWS SNS journey (Push)**: for this to work PingAM needs to be accessible via the internet
 	frodo journey import -k -f docker-build/add-ons/openam/journeys/WebinarJourneySNS.journey.json /openam $(shell cat .env | grep PINGAM_REALM | cut -d= -f2-)
 	#
-	# WebAuthN journey
 	# name = WebinarJourneyWebAuthN
+	# WebAuthN journey
 	frodo journey import -k -f docker-build/add-ons/openam/journeys/WebinarJourneyWebAuthN.journey.json /openam $(shell cat .env | grep PINGAM_REALM | cut -d= -f2-)
 	#
-	# Leveraging back channel authentication. This allows forwarding values from PingFederate to PingAM
 	# name = WebinarJourneyBackChannelAuth
+	# Leveraging back channel authentication. This allows forwarding values from PingFederate to PingAM
+	# This journey takes the username given by PingFederate and requests the password from the user
 	frodo journey import -k -f docker-build/add-ons/openam/journeys/WebinarJourneyBackChannelAuth.journey.json /openam $(shell cat .env | grep PINGAM_REALM | cut -d= -f2-)
+	#
+	# name = WebinarJourneyMfaOnly
+	# Leveraging back channel authentication. This takes the user through an Oath (OTP) flow.
+	frodo journey import -k -f docker-build/add-ons/openam/journeys/WebinarJourneyMfaOnly.journey.json /openam $(shell cat .env | grep PINGAM_REALM | cut -d= -f2-)
 	#
 	# The journey WebinarJourney uses the script node WebinarSetSessionProps
 	# It needs to be updated in order to retrieve user attributes that are specified in '.env#PINGAM_LDAP_ATTRIBUTE'

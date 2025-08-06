@@ -78,13 +78,13 @@
       "createdBy": "id=amAdmin,ou=user,ou=am-config",
       "creationDate": 1748966114065,
       "default": false,
-      "description": null,
+      "description": "A simple script that collects the username that was given via a back channel authentication request.",
       "evaluatorVersion": "1.0",
       "language": "JAVASCRIPT",
       "lastModifiedBy": "id=amAdmin,ou=user,ou=am-config",
       "lastModifiedDate": 1748966548470,
       "name": "WebinarBackChannelAuthProperties",
-      "script": "\"/*\\n  - Data made available by nodes that have already executed are available in the sharedState variable.\\n  - The script should set outcome to either \\\"true\\\" or \\\"false\\\".\\n */\\nvar username = nodeState.get(\\\"username\\\");\\nvar foo = nodeState.get(\\\"another\\\");\\n\\nlogger.error(\\\"The username is {}\\\", username);\\n\\noutcome = \\\"true\\\";\""
+      "script": "\"/*\\n  - A simple script that collects the username that was given via a back channel authentication request.\\n  - The script should set outcome to either \\\"true\\\" or \\\"false\\\".\\n */\\nvar username = nodeState.get(\\\"username\\\");\\n\\nlogger.error(\\\"The username is {}\\\", username);\\n\\noutcome = \\\"true\\\";\""
     }
   },
   "socialIdentityProviders": {},

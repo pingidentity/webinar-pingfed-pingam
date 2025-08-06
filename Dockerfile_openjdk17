@@ -1,6 +1,6 @@
 FROM openjdk:17-jdk
 
-RUN microdnf install findutils zip unzip
+RUN microdnf install findutils zip unzip curl tar bash procps
 
 COPY dev/pubCert.crt /tmp/pubCert.crt
 

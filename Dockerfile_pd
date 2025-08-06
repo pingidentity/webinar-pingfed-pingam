@@ -2,8 +2,10 @@ FROM webinar/openjdk:17
 
 ARG version
 ARG hostname
-ENV build_version $version
-ENV local_hostname $hostname
+ARG sslpwd
+ENV build_version=$version
+ENV local_hostname=$hostname
+ENV ssl_pwd=$sslpwd
 
 COPY products/pingdirectory/$build_version /tmp/pingdirectory.zip
 
@@ -11,6 +13,9 @@ RUN unzip -a /tmp/pingdirectory.zip
 
 RUN mv PingDirectory /opt/pingdirectory
 RUN rm /tmp/pingdirectory.zip
+
+COPY dev/tlskey.p12 /opt/ssl/tlskey.p12
+RUN chmod 644 /opt/ssl/tlskey.p12
 
 # This is only needed for building the image and will be removed further down
 #
@@ -27,8 +32,9 @@ RUN /opt/pingdirectory/setup --acceptLicense \
                                      --maxHeapSize 768m --primeDB --ldapsPort 636 --httpsPort 9443 \
                                      --instanceName pdwebinarlocal --location office \
                                      --optionCacheDirectory /opt/pingdirectory/option-cache \
-                                     --enableStartTLS --generateSelfSignedCertificate --no-prompt \
-                                     --doNotStart --allowWeakRootUserPassword
+                                     --enableStartTLS --no-prompt \
+                                     --doNotStart --allowWeakRootUserPassword \
+                                     --usePKCS12KeyStore "/opt/ssl/tlskey.p12" --keyStorePassword $ssl_pwd
 
 RUN mkdir -p /opt/tmp/pingamldifs
 
