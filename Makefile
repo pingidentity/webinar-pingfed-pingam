@@ -15,7 +15,7 @@ build_java:
 	mvn clean package
 
 build_docker_pf:
-	docker build --no-cache --tag webinar/pf:latest --build-arg version=pingfederate-12.3.0.zip --no-cache  -f Dockerfile_pf .
+	docker build --no-cache --tag webinar/pf:latest --build-arg version=pingfederate-12.3.1.zip --no-cache  -f Dockerfile_pf .
 
 build_docker_am:
 	docker build --no-cache --tag webinar/openam:latest --build-arg version=AM-8.0.1.war -f Dockerfile_am .

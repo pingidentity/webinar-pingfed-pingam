@@ -1,7 +1,7 @@
 FROM webinar/openjdk:17
 
 ARG version
-ENV build_version $version
+ENV build_version=$version
 
 COPY products/pingfederate/$build_version /tmp/pingfederate.zip
 
