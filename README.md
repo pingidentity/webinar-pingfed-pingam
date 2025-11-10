@@ -49,7 +49,7 @@ Unzip the file and place the extracted jar-file at this location:
 The setup uses these technologies throughout:
 
 - Docker
-- Java11
+- Java17
 - Maven
 - Make (this is just for convenience)
 
