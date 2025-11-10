@@ -136,33 +136,21 @@ These are the steps to launch and use the setup. Repeat these steps after stoppi
 
 All previous instructions are required once only and may be repeated if java code or the dockerfiles have been modified.
 
-### Launch the setup
+### Launch and configure the setup
 
 All docker images have been built and are ready to be launched for the first time:
 
 - `docker compose up`
   - view the file **docker-compose.yml** for browser admin URLs  and username/ passwords for the different products
-
-### Configure the running setup
-
-At this point PingFederate and PingAM are basically empty containers (PingDirectory already contains example users and is ready to go).
-
-Execute the next command whenever the setup was restarted:
-
 - `make configure_setup`
   - this configures all products
   - run this in a separate terminal
-
-Execute this once (the first time):
-
 - `frodo conn add -k https://openam.webinar.local:8449/openam amAdmin 'Password1'`
+  - This needs to be run only once.
   - It adds a connection for frodo and saves it here: **~/.frodo/Connections.json**
   - run `~/.frodo/Connections.json` to check if you already have an entry
-
-Execute the next command whenever the setup was restarted:
-
 - `make import_journeys`
-  - this imports example journeys into PingAM
+  - this imports all example journeys into PingAM
 
 PingFederate and PingAM are now ready to be used. Find the admin URLs and usernames/ passwords in *docker-compose.yml*.
 

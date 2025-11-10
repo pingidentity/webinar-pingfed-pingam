@@ -1,6 +1,8 @@
-FROM openjdk:17-jdk
+FROM eclipse-temurin:17-jdk
 
-RUN microdnf install findutils zip unzip curl tar bash procps
+RUN apt-get update && \
+    apt-get install -y unzip zip findutils && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY dev/pubCert.crt /tmp/pubCert.crt
 

@@ -2,6 +2,7 @@ FROM webinar/openjdk:17
 
 ARG version
 ARG hostname
+
 ARG sslpwd
 ENV build_version=$version
 ENV local_hostname=$hostname
