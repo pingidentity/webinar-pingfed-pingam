@@ -1,7 +1,7 @@
 FROM webinar/tomcat:10
 
 ARG version
-ENV build_version $version
+ENV build_version=$version
 
 # Adding PingAM
 #

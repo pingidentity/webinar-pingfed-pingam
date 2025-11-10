@@ -15,13 +15,13 @@ build_java:
 	mvn clean package
 
 build_docker_pf:
-	docker build --no-cache --tag webinar/pf:latest --build-arg version=pingfederate-12.2.0.zip --no-cache  -f Dockerfile_pf .
+	docker build --no-cache --tag webinar/pf:latest --build-arg version=pingfederate-12.3.3.zip --no-cache  -f Dockerfile_pf .
 
 build_docker_am:
 	docker build --no-cache --tag webinar/openam:latest --build-arg version=AM-8.0.1.war -f Dockerfile_am .
 
 build_docker_pd:
-	docker build --no-cache  --tag webinar/pd:latest --build-arg version=PingDirectory-10.2.0.1.zip --build-arg hostname=$(shell cat .env | grep HOSTNAME_PD) -f Dockerfile_pd .
+	docker build --no-cache  --tag webinar/pd:latest --build-arg version=PingDirectory-10.3.0.0.zip --build-arg hostname=$(shell cat .env | grep HOSTNAME_PD) -f Dockerfile_pd .
 
 build_docker_ds:
 	docker build --no-cache --tag webinar/ds:latest \

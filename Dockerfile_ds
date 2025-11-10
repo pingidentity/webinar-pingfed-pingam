@@ -7,12 +7,12 @@ ARG hostname
 ARG sslpwd
 ARG truststorepwd
 
-ENV build_version $version
-ENV deployment_id $deploymentid
-ENV deployment_pwd $deploymentpwd
-ENV local_hostname $hostname
-ENV ssl_pwd $sslpwd
-ENV truststore_pwd $truststorepwd
+ENV build_version=$version
+ENV deployment_id=$deploymentid
+ENV deployment_pwd=$deploymentpwd
+ENV local_hostname=$hostname
+ENV ssl_pwd=$sslpwd
+ENV truststore_pwd=$truststorepwd
 
 COPY products/pingds/$build_version /tmp/opendj.zip
 

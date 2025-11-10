@@ -2,8 +2,8 @@ FROM webinar/openjdk:17
 
 ARG version
 ARG hostname
-ENV build_version $version
-ENV local_hostname $hostname
+ENV build_version=$version
+ENV local_hostname=$hostname
 
 COPY products/pingdirectory/$build_version /tmp/pingdirectory.zip
 
