@@ -13,7 +13,7 @@ services:
     environment:
       - "SSL_PWD=${SSL_PWD}"
       - "SSL_PORT=8448"
-      - "HOSTNAME=${HOSTNAME_PLAYGROUND}"
+      - "HOSTNAME_PLAYGROUND=${HOSTNAME_PLAYGROUND}"
     volumes:
       - ./dev/tlskey.p12:/usr/local/tomcat/ssl/tlskey.p12
 

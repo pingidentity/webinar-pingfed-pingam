@@ -15,8 +15,6 @@ services:
     environment:
       - "PF_RUN_PF_CONSOLE_TITLE=Webinar"
       - "PF_RUN_PF_ADMIN_BASEURL=https://${PF_ADMIN_NODE}"
-      - "PF_RUN_COM_UNBOUNDID_LDAP_SDK_DEBUG_ENABLED=true"
-      - "PF_RUN_COM_UNBOUNDID_LDAP_SDK_DEBUG_LEVEL=ALL"
     volumes:
       - ./products/pingfederate/pingfederate.lic:/opt/pingfederate/server/default/conf/pingfederate.lic
 
@@ -39,7 +37,7 @@ services:
     environment:
       - "SSL_PWD=${SSL_PWD}"
       - "SSL_PORT=8449"
-      - "HOSTNAME=${HOSTNAME_AM}"
+      - "HOSTNAME_AM=${HOSTNAME_AM}"
 
   # user: cn=administrator/ Password1
   # https://pd.webinar.local:9443/console

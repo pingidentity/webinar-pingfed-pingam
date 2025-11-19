@@ -226,7 +226,7 @@ public class Main {
         String p12Id = null;
         KeyPairViews keyPairs = apiClient.keyPairssslServerApi().getKeyPairs();
         for (KeyPairView next : keyPairs.getItems()) {
-            if (String.format("CN=%s", propsEnv.getProperty("PINGAM_COOKIE_DOMAIN")).equalsIgnoreCase(next.getSubjectDN())) {
+            if (String.format("CN=%s", propsEnv.getProperty("TOP_LEVEL_DOMAIN")).equalsIgnoreCase(next.getSubjectDN())) {
                 p12AlreadyImported = true;
                 p12Id = next.getId();
                 break;
@@ -255,7 +255,7 @@ public class Main {
         boolean certAlreadyImported = false;
         CertViews trustedCAs = apiClient.certificatescaApi().getTrustedCAs();
         for (CertView next : trustedCAs.getItems()) {
-            if (String.format("CN=%s", propsEnv.getProperty("PINGAM_COOKIE_DOMAIN")).equalsIgnoreCase(next.getSubjectDN())) {
+            if (String.format("CN=%s", propsEnv.getProperty("TOP_LEVEL_DOMAIN")).equalsIgnoreCase(next.getSubjectDN())) {
                 certAlreadyImported = true;
                 break;
             }
@@ -704,7 +704,7 @@ public class Main {
 
         ConfigField fieldSimpleSource = new ConfigField();
         fieldSimpleSource.setName("Source");
-        fieldSimpleSource.setValue("com.pingidentity.adapter.input.parameter.userid.authenticated");
+        fieldSimpleSource.setValue("com.pingidentity.adapter.input.parameter.userid");
 
         ConfigRow configSimpleRowUsername = new ConfigRow();
         configSimpleRowUsername.addFieldsItem(fieldSimpleUsername);
@@ -1092,7 +1092,7 @@ public class Main {
         payload.add(new BasicNameValuePair("ADMIN_PWD", propsEnv.getProperty("PINGAM_ADMIN_PASSWORD")));
         payload.add(new BasicNameValuePair("ADMIN_CONFIRM_PWD", propsEnv.getProperty("PINGAM_ADMIN_PASSWORD")));
         payload.add(new BasicNameValuePair("AMLDAPUSERPASSWD", propsEnv.getProperty("PINGAM_ADMIN_PASSWORD")));
-        payload.add(new BasicNameValuePair("COOKIE_DOMAIN", propsEnv.getProperty("PINGAM_COOKIE_DOMAIN")));
+        payload.add(new BasicNameValuePair("COOKIE_DOMAIN", propsEnv.getProperty("TOP_LEVEL_DOMAIN")));
         payload.add(new BasicNameValuePair("acceptLicense", "true"));
 
         payload.add(new BasicNameValuePair("DATA_STORE", "dirServer"));
@@ -1143,7 +1143,7 @@ public class Main {
         headers.add(new BasicHeader("If-Match", "*"));
 
         JSONArray cookieDomains = new JSONArray();
-        cookieDomains.add(propsEnv.getProperty("PINGAM_COOKIE_DOMAIN"));
+        cookieDomains.add(propsEnv.getProperty("TOP_LEVEL_DOMAIN"));
 
         JSONObject payload = new JSONObject();
         payload.put("cookieDomains", cookieDomains);
@@ -1426,7 +1426,7 @@ public class Main {
     private void updatePingAmPdTemplate() {
         pingAmPdConfigTemplate.replace("_id", "PingDirectory");
         JSONObject ldapsettings = (JSONObject) pingAmPdConfigTemplate.get("ldapsettings");
-        ((JSONArray) ldapsettings.get("sun-idrepo-ldapv3-config-ldap-server")).add("pd.webinar.local:389");
+        ((JSONArray) ldapsettings.get("sun-idrepo-ldapv3-config-ldap-server")).add(String.format("%s:389", propsEnv.getProperty("HOSTNAME_PD")));
         ldapsettings.replace("sun-idrepo-ldapv3-config-organization_name", "dc=pingdirectory,dc=local");
         ldapsettings.replace("sun-idrepo-ldapv3-config-authid", "cn=administrator");
         ldapsettings.replace("sun-idrepo-ldapv3-config-authpw", "Password1");

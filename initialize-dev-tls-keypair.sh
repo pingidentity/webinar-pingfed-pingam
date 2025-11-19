@@ -7,7 +7,7 @@ mv -f ./dev/pubCert.crt ./dev/pubCert.crt.bak
 
 # Exporting environment variables for key creation
 #
-export $(cat .env | grep HOSTNAME)
+export $(cat .env | grep TOP_LEVEL_DOMAIN)
 export $(cat .env | grep HOSTNAME_PF)
 export $(cat .env | grep HOSTNAME_AM)
 export $(cat .env | grep HOSTNAME_PD)
@@ -25,8 +25,8 @@ keytool -genkey \
   -keypass ${SSL_PWD} \
   -validity 365 \
   -keysize 2048 \
-  -dname "CN=${HOSTNAME}" \
-  -ext san=dns:${HOSTNAME},dns:${HOSTNAME_PF},dns:${HOSTNAME_PD},dns:${HOSTNAME_AM},dns:${HOSTNAME_DS},dns:${HOSTNAME_PLAYGROUND},dns:localhost
+  -dname "CN=${TOP_LEVEL_DOMAIN}" \
+  -ext san=dns:${TOP_LEVEL_DOMAIN},dns:${HOSTNAME_PF},dns:${HOSTNAME_PD},dns:${HOSTNAME_AM},dns:${HOSTNAME_DS},dns:${HOSTNAME_PLAYGROUND},dns:localhost
 
 # Export public cert
 #
@@ -41,7 +41,7 @@ keytool -exportcert \
 
 # Unset all variables
 #
-unset HOSTNAME
+unset TOP_LEVEL_DOMAIN
 unset HOSTNAME_PF
 unset HOSTNAME_AM
 unset HOSTNAME_PD

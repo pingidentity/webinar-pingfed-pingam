@@ -23,7 +23,7 @@ build_docker_am:
 build_docker_pd:
 	docker build --no-cache  --tag webinar/pd:latest \
 	--build-arg version=PingDirectory-10.3.0.0.zip \
-	--build-arg hostname=$(shell cat .env | grep HOSTNAME_PD) \
+	--build-arg hostname_pd=$(shell cat .env | grep HOSTNAME_PD) \
 	--build-arg sslpwd=$(shell cat .env | grep SSL_PWD | sed -e "s/SSL_PWD=//g") \
 	-f Dockerfile_pd .
 
@@ -32,7 +32,7 @@ build_docker_ds:
 	--build-arg version=DS-8.0.0.zip \
 	--build-arg deploymentid=$(shell cat .env | grep DEPLOYMENT_ID | sed -e "s/DEPLOYMENT_ID=//g") \
 	--build-arg deploymentpwd=$(shell cat .env | grep DEPLOYMENT_PASSWORD | sed -e "s/DEPLOYMENT_PASSWORD=//g") \
-	--build-arg hostname=$(shell cat .env | grep HOSTNAME_DS | sed -e "s/HOSTNAME_DS=//g") \
+	--build-arg hostname_ds=$(shell cat .env | grep HOSTNAME_DS | sed -e "s/HOSTNAME_DS=//g") \
 	--build-arg sslpwd=$(shell cat .env | grep SSL_PWD | sed -e "s/SSL_PWD=//g") \
 	--build-arg truststorepwd=changeit \
 	-f Dockerfile_ds .
@@ -115,12 +115,12 @@ import_journeys:
 	#
 	java -jar target/setup-1.0.jar update_script_node
 
-# Remove all files that were generated
+# Remove all files that were generated. Only .env is moved to dev/.env.bak
 # Do not run this unless you are sure a missing file will not cause issues
 # Other than that, starting from scratch is required
 #
 clean_all:
-	rm -fr .env
+	mv .env dev/.env.bak
 	rm -fr dev/*.p12
 	rm -fr dev/*.bak
 	rm -fr dev/*.crt

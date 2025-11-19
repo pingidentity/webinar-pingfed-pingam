@@ -30,7 +30,7 @@ This webinar uses the following products and integration kits:
 - PingAM 8.0.1
 - PingDS 8.0
 
-Download those products, place them here: **./products/...** and follow the **README.md** instructions per product.
+Download those products, place them here: **./products/...** and follow the **README.md** instructions per product. It is important to match the specified version.
 
 Licenses for PingFederate and PingDirectory should be requested at your CSM.
 
@@ -38,11 +38,11 @@ Additionally, download the PingAM integration kit:
 
 - **https://www.pingidentity.com/en/resources/downloads/pingfederate.html**
 - tab **Add-Ons**
-- **PingAM Integration Kit 1.2**
+- **PingAM Integration Kit 1.3.1**  // older versions are not suitable for this setup
 
 Unzip the file and place the extracted jar-file at this location:
 
-- **docker-build/add-ons/pingfederate/pf-pingam-adapter-1.2.jar**
+- **docker-build/add-ons/pingfederate/server/default/deploy/pf-pingam-adapter-1.3.1.jar**
 
 ## Prepare your environment
 
@@ -148,11 +148,10 @@ All docker images have been built and are ready to be launched for the first tim
 - `frodo conn add -k https://openam.webinar.local:8449/openam amAdmin 'Password1'`
   - This needs to be run only once.
   - It adds a connection for frodo and saves it here: **~/.frodo/Connections.json**
-  - run `~/.frodo/Connections.json` to check if you already have an entry
+  - run `cat ~/.frodo/Connections.json` to check if you already have an entry
 - `make import_journeys`
   - this imports all example journeys into PingAM
-
-PingFederate and PingAM are now ready to be used. Find the admin URLs and usernames/ passwords in *docker-compose.yml*.
+  - Tip: if this fails, wait 5-10 minutes and try again (for some reason that works). Successful imports should include **Importing first journey in file...** in the console output
 
 All journeys can be found here after they have been imported; their names start with **Webinar**:
 
@@ -161,32 +160,42 @@ All journeys can be found here after they have been imported; their names start 
   - Authentication
     - Trees
 
-### Stopping containers
+The products are now ready for use. Open the consoles in your browser:
 
-Once done with this setup stop it by running the following in the active terminal:
+- **PingFederate**: https://pf.webinar.local:9999 / Administrator / Password1
+- **PingAM**: https://openam.webinar.local:8449/openam/XUI/#login / amAdmin / Password1
+- **PingDirectory**: https://pd.webinar.local:9443/console / cn=administrator/ Password1
+- **PingDS**: no console available / uid=admin / Password1
 
-- `ctrl+c`
-- `docker compose down`
+Test users are stored in PingDirectory and PingFederate and PingAM are connected to it.
 
-## Try out a journey
-
-In this setup PingAM and PingFederate are connected to PingDirectory which includes 10 test users.
-
-The usernames and passwords follow this pattern:
+Usernames follow this pattern:
 
 - **user.1/ password**
-- **user.2/ password**
 - **...**
+- **user.10/ password**
 
-### Provided example journeys
+If there are any issues, here is where to find log files:
 
-This setup comes with different PingFederate policies and PingAM journeys
+**PingAM**:
+- `docker exec -it openamwebinarlocal bash`  // this takes you into the running PingAM container
+- `cd /root/openam/var/`
+- `ls -la`  // several log files are listed
 
-|PingFederate policy| IDP Adapter| Description                                                                                                                                                                                                                                                            | Notes|
-|-------------------|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------|
-|WebinarPingAMTree|PingAMIdpAdapter| PingFederate delegates authentication to PingAM. The adapter is configured to execute this journey in PingAM: **WebinarJourney**. This is the defautl policy and is active| Update the adapter configuration to execute other journeys. Choose from these: **WebinarJourneyOAthPush**, **WebinarJourneyWebAuthN** |
-|WebinarPingAMBCATree|PingAMBackChannelAuthIdpAdapter| Use this with an authorization code flow that includes the parameter *login_hint*. PingFederate forwards the value to PingAM where the user has to provide his password. The adapter is configured to execute this journey in PingAM: **WebinarJourneyBackChannelAuth** ||
-|WebinarMfaTree|PingAMMfaOnlyIdpAdapter| The user gets authenticated in PingFederate via the HTMLFormAdapter. Afterwards, the user is redirected to PingAM where an OTP based MFA flow is executed. The adapter is configured to execute this journey in PingAM: **WebinarJourneyMfaOnly**                      ||
+**PingFederate**:
+- `docker exec -it pfwebinarlocal bash`  // this takes you into the running PingFederate container
+- `cd /opt/pingfederate/log`
+- `ls -la`  // several log files are listed
+
+### Provided example PingFederate authentication policies and PingAM user journeys (trees)
+
+This setup comes with different PingFederate policies and PingAM journeys.
+
+|PingFederate policy| IDP Adapter| Description                                                                                                                                                                                                                                                            | Notes                                                                                                                                                                                                                                                                                                |
+|-------------------|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|WebinarPingAMTree|PingAMIdpAdapter| PingFederate delegates authentication to PingAM. The adapter is configured to execute this journey in PingAM: **WebinarJourney**. This is the defautl policy and is active| Update the adapter configuration to execute other journeys. Choose from these: **WebinarJourneySNS** (requires public access via the internet), **WebinarJourneyWebAuthN** (requires a valid TLS keypair (not self-signed)), **WebinarJourneyOAthPush** (users need the ForgeRock Authenticator app) |
+|WebinarPingAMBCATree|PingAMBackChannelAuthIdpAdapter| Use this with an authorization code flow that includes the parameter *login_hint*. PingFederate forwards the value to PingAM where the user has to provide his password. The adapter is configured to execute this journey in PingAM: **WebinarJourneyBackChannelAuth** |                                                                                                                                                                                                                                                                                                      |
+|WebinarMfaTree|PingAMMfaOnlyIdpAdapter| The user gets authenticated in PingFederate via the HTMLFormAdapter. Afterwards, the user is redirected to PingAM where an OTP based MFA flow is executed. The adapter is configured to execute this journey in PingAM: **WebinarJourneyMfaOnly**                      |                                                                                                                                                                                                                                                                                                      |
 
 **Tip:** Enable/ disable the policy you want to try out.
 
@@ -208,26 +217,16 @@ Open a browser to invoke a journey without involving PingFederate:
 
 - **https://openam.webinar.local:8449/openam/XUI/?realm=/webinar&service=WebinarJourney#login**
 
-Replace **.../webinar** with your realm and **...=WebinarJourney** with another journey. Find available journey names in **Makefile** or in the PingAM UI.
+Replace **...=WebinarJourney** with another journey. Find available journey names in **Makefile** or in the PingAM UI.
 
-The successful journey ends with a view of the users profile.
+The successful journey ends with a view of the user's profile.
 
-### Reconfigure PingFederate to invoke a different Journey
+### Stopping containers
 
-**Note:** This update is only useful in combination with an oauth client
+Once done with this setup stop it by running the following in the active terminal:
 
-In PingFederate go to **Authentication - IDP Adapters - PingAMIdpAdapter** and review its configuration.
-
-Replace **JOURNEY** with **WebinarJourneyOAthPush**.
-
-The next time a user authenticates, the OAth Push journey will be executed:
-
-- authenticate using username/ password
-- register device
-- confirm verification code
-- signed in
-
-**Note:** The user will be asked to download the ForgeRock Authenticator app for that.
+- `ctrl+c`
+- `docker compose down`
 
 ## A few other notes
 
@@ -250,22 +249,10 @@ If you want to connect into a running image, use this:
 - `docker exec -it {container_name} bash`
   - **{container_name}** -- see **docker-compose.yml**
 
-The default directory for log files in PingAM
-
-- `docker exec -it openamwebinarlocal bash`  // this takes you into the running container
-- `/root/openam/var/`
-
-To view log files in PingFederate:
-
-- `docker exec -it pfwebinarlocal bash`  // the prompt is now within the running container
-- `cd /opt/pingfederate/log`
-- `ls -la`  // several log files are listed
-
 When done with the evaluation of this setup it could be useful to remove the images as they are large in size:
 
 - `docker rmi $(docker images --filter=reference="webinar/*" -q)`
   - any image tagged as **webinar/** will be deleted
-
 
 ## Links
 

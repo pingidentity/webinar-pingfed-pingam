@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ -z "$HOSTNAME" ]
+if [ -z "$HOSTNAME_AM" ]
 then
-  HOSTNAME=openam.webinar.local
+  HOSTNAME_AM=openam.webinar.local
 fi
 
 # setting the SSL port to 8449 if none was given
@@ -15,13 +15,13 @@ fi
 
 # replace @@variable@@ in server.xml with the real values
 #
-sed -i "s/@@hostname@@"/${HOSTNAME}/g /usr/local/tomcat/conf/server.xml
+sed -i "s/@@hostname@@"/${HOSTNAME_AM}/g /usr/local/tomcat/conf/server.xml
 sed -i "s/@@sslport@@"/${SSL_PORT}/g /usr/local/tomcat/conf/server.xml
 sed -i "s/@@sslpwd@@"/${SSL_PWD}/g /usr/local/tomcat/conf/server.xml
 
 # overwrite the variables since they are not needed anywhere anymore
 #
-unset HOSTNAME=
+unset HOSTNAME_AM=
 unset SSL_PORT=
 unset SSL_PWD=
 

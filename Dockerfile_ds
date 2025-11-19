@@ -3,14 +3,14 @@ FROM webinar/openjdk:17
 ARG version
 ARG deploymentid
 ARG deploymentpwd
-ARG hostname
+ARG hostname_ds
 ARG sslpwd
 ARG truststorepwd
 
 ENV build_version=$version
 ENV deployment_id=$deploymentid
 ENV deployment_pwd=$deploymentpwd
-ENV local_hostname=$hostname
+ENV local_hostname=$hostname_ds
 ENV ssl_pwd=$sslpwd
 ENV truststore_pwd=$truststorepwd
 

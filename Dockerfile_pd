@@ -1,11 +1,11 @@
 FROM webinar/openjdk:17
 
 ARG version
-ARG hostname
+ARG hostname_pd
 
 ARG sslpwd
 ENV build_version=$version
-ENV local_hostname=$hostname
+ENV local_hostname=$hostname_pd
 ENV ssl_pwd=$sslpwd
 
 COPY products/pingdirectory/$build_version /tmp/pingdirectory.zip
