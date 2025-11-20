@@ -2,7 +2,7 @@
 # Based on:
 # https://migueldoctor.medium.com/how-to-create-a-custom-docker-image-with-jdk8-maven-and-gradle-ddc90f41cee4
 #
-FROM eclipse-temurin:11-jdk
+FROM eclipse-temurin:17-jdk
 
 RUN apt install curl
 RUN apt install tar

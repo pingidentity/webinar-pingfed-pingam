@@ -1,6 +1,6 @@
 # Orchestration with PingFederate, PingAM, PingDirectory and PingDS
 
-This project is an example setup that takes advantage of the orchestration features that PingAM provides.
+This project is an example setup that takes advantage of the orchestration capabilities that PingAM provides. It connects PingFederate with PingAM and demonstrates how PingAM MFA features can be combined with PingFederates authentication policies.
 
 The target audiences for this setup are administrators and developers who want to understand more about this configuration and run it on-prem or in a private cloud.
 
