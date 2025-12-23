@@ -1,6 +1,6 @@
 # PingDirectory
 
-Place the PingDirectory 10.3 zip file and the license in this directory.
+Place the PingDirectory 11 zip file and the license in this directory.
 
-- `PingDirectory-10.3.0.0.zip`
+- `PingDirectory-11.0.0.0.zip`
 - `pingdirectory.lic`

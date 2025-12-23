@@ -107,19 +107,19 @@ along with this program; if not, see <https://www.apache.org/licenses/LICENSE-2.
         <dependency>
             <groupId>com.ping.demo.swagger</groupId>
             <artifactId>pingfederate-swagger-client</artifactId>
-            <version>12.3.0</version>
+            <version>13.0.0</version>
             <scope>system</scope>
             <systemPath>
-                ${pom.basedir}/libs/com/pingfederate/webinar/pingfederate-swagger-client/12.3.0/pingfederate-swagger-client-12.3.0.jar
+                ${pom.basedir}/libs/com/pingfederate/webinar/pingfederate-swagger-client/13.0.0/pingfederate-swagger-client-13.0.0.jar
             </systemPath>
         </dependency>
         <dependency>
             <groupId>com.ping.demo.swagger</groupId>
             <artifactId>pingfederate-swagger-objectmapper</artifactId>
-            <version>12.3.0</version>
+            <version>13.0.0</version>
             <scope>system</scope>
             <systemPath>
-                ${pom.basedir}/libs/com/pingfederate/webinar/pingfederate-swagger-objectmapper/12.3.0/pingfederate-swagger-objectmapper-12.3.0.jar
+                ${pom.basedir}/libs/com/pingfederate/webinar/pingfederate-swagger-objectmapper/13.0.0/pingfederate-swagger-objectmapper-13.0.0.jar
             </systemPath>
         </dependency>
         <dependency>

@@ -1,6 +1,6 @@
 # PingFederate
 
-Place the PingFederate 12.3 zip file in this directory.
+Place the PingFederate 13 zip file and the license in this directory.
 
-- `pingfederate-12.3.3.zip`
+- `pingfederate-13.0.0.zip`
 - `pingfederate.lic`

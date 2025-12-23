@@ -4,9 +4,9 @@ This project is an example setup that takes advantage of the orchestration capab
 
 The target audiences for this setup are administrators and developers who want to understand more about this configuration and run it on-prem or in a private cloud.
 
-All products are configured via APIs call, no manual tasks are needed. This makes it very easy to get started and have the setup up and running after just a few minutes.
+All products are configured via API calls, no manual tasks are needed. This makes it easy to get started and have the setup up and running after just a few minutes.
 
-**Overview**
+## Overview
 
 The environment of this setup looks like this:
 
@@ -25,12 +25,12 @@ This webinar uses the following products and integration kits:
 
 **Products:**
 
-- PingFederate 12.3
-- PingDirectory 10.3
-- PingAM 8.0.1
+- PingFederate 13.0
+- PingDirectory 11.0
+- PingAM 8.0
 - PingDS 8.0
 
-Download those products, place them here: **./products/...** and follow the **README.md** instructions per product. It is important to match the specified version.
+Follow the **README.md** in these directories **./products/...** to find instructions per product. It is important to match the specified versions.
 
 Licenses for PingFederate and PingDirectory should be requested at your CSM.
 
@@ -38,7 +38,7 @@ Additionally, download the PingAM integration kit:
 
 - **https://www.pingidentity.com/en/resources/downloads/pingfederate.html**
 - tab **Add-Ons**
-- **PingAM Integration Kit 1.3.1**  // older versions are not suitable for this setup
+- **PingAM Integration Kit 1.3.1** // older versions are not suitable for this setup
 
 Unzip the file and place the extracted jar-file at this location:
 
@@ -57,7 +57,7 @@ The setup uses these technologies throughout:
 
 ### Update hosts file
 
-To simulate a more realistic environment update the local hosts file:
+To simulate a more realistic environment, update the local hosts file:
 
 - `sudo vi /etc/hosts`
   - add **{your-current-ip-address} pf.webinar.local pd.webinar.local openam.webinar.local ds.webinar.local playground.webinar.local**
@@ -66,7 +66,7 @@ To simulate a more realistic environment update the local hosts file:
 
 ### Install Frodo
 
-In order to use example PingAM trees/ journeys install **Frodo-cli**:
+To use example PingAM trees/ journeys install **Frodo-cli**:
 
 - `brew tap rockcarver/frodo-cli`
 - `brew install frodo-cli`
@@ -91,14 +91,13 @@ In the current directory, open a terminal and run these commands:
 
 ### Review and potentially update the default configuration
 
-All configuration details are taken out of **.env**. The settings in this file are used throughout all configuration steps further down.
-
-For the purpose of this setup all values can most likely stay as they are.
+All configuration details are taken out of **.env** and can most likely stay as they are.
 
 The only exceptions are these:
 
 - update the file to configure and register an oauth client in PingFederate
-- update the file to use the journey **WebinarJourneySNS** which requires AWS SNS credentials
+  - find **PF_OAUTH_CLIENT_ID**
+- to use the journey **WebinarJourneySNS** configure AWS SNS credentials
   - this feature requires PingAM to be accessible from the internet
 
 ### Compile code and build docker images
@@ -156,7 +155,7 @@ All docker images have been built and are ready to be launched for the first tim
 All journeys can be found here after they have been imported; their names start with **Webinar**:
 
 - https://openam.webinar.local:8449/openam
-- realm **webinar**  // the realm you configured in .env (PINGAM_REALM)
+- realm **webinar** // the realm you configured in .env (PINGAM_REALM)
   - Authentication
     - Trees
 
@@ -242,7 +241,7 @@ If the build process fails, due to missing resources, try these first:
 
 If nothing helps, and you run into space limitations you cannot solve:
 - `docker system prune --all --force --volumes`
-  - - WATCH OUT, this will blow away ALL images on your machine!
+  - WATCH OUT, this will blow away ALL images on your machine!
 
 If you want to connect into a running image, use this:
 
@@ -259,22 +258,25 @@ When done with the evaluation of this setup it could be useful to remove the ima
 - Download PingFederate:
   - [https://www.pingidentity.com/en/resources/downloads/pingfederate.html](https://www.pingidentity.com/en/resources/downloads/pingfederate.html)
   - the PingAM integration kit is already part of this setup, no need to download it separately
-- Download PingAM:
-  - [https://backstage.forgerock.com/downloads/browse/am/featured](https://backstage.forgerock.com/downloads/browse/am/featured)
 - Download PingDirectory:
   - [https://www.pingidentity.com/en/resources/downloads/pingdirectory-downloads/previous-releases.html](https://www.pingidentity.com/en/resources/downloads/pingdirectory-downloads/previous-releases.html)
+- Download PingAM:
+  - [https://backstage.forgerock.com/downloads/browse/am/featured](https://backstage.forgerock.com/downloads/browse/am/featured)
+- Download PingDS:
+  - [https://backstage.pingidentity.com/downloads/browse/ds/featured](https://backstage.pingidentity.com/downloads/browse/ds/featured)
 - PingFederate Swagger-UI:
   - [https://pf.webinar.local:9999/pf-admin-api/api-docs/#/](https://pf.webinar.local:9999/pf-admin-api/api-docs/#/)
 - PingAM Swagger-UI:
   - [https://openam.webinar.local:8449/openam/ui-admin/#api/explorer/](https://openam.webinar.local:8449/openam/ui-admin/#api/explorer/)
+  - download a swagger: `curl -X GET "https://openam.webinar.com:8449/openam/json/scripts?_api" -o openapi_am.json`
 - Frodo, a management tool for PingAM:
   - [https://github.com/rockcarver/frodo-cli?tab=readme-ov-file#quick-start](https://github.com/rockcarver/frodo-cli?tab=readme-ov-file#quick-start)
 - Create a WebAuthN tree in PingAM
-  - [https://backstage.forgerock.com/docs/am/7.4/authentication-guide/authn-mfa-webauthn.html](https://backstage.forgerock.com/docs/am/7.4/authentication-guide/authn-mfa-webauthn.html)
+  - [https://docs.pingidentity.com/pingam/8/am-authentication/authn-mfa-webauthn.html](https://docs.pingidentity.com/pingam/8/am-authentication/authn-mfa-webauthn.html)
 - Learn more about setting up a push notification service leveraging AWS SNS:
-  - [https://backstage.forgerock.com/docs/am/7.4/authentication-guide/authn-mfa-trees-push.html](https://backstage.forgerock.com/docs/am/7.4/authentication-guide/authn-mfa-trees-push.html)
+  - [https://docs.pingidentity.com/pingam/8/am-authentication/authn-mfa-trees-push.html](https://docs.pingidentity.com/pingam/8/am-authentication/authn-mfa-trees-push.html)
 - Manage directory schemas with LDIF:
-  - [https://backstage.forgerock.com/docs/am/7.4/install-guide/supported-ldifs.html](https://backstage.forgerock.com/docs/am/7.4/install-guide/supported-ldifs.html)
+  - [https://docs.pingidentity.com/pingam/8/installation/supported-ldifs.html](https://docs.pingidentity.com/pingam/8/installation/supported-ldifs.html)
 - PingIdentity on YouTube:
   - [@PingIdentityTV](https://www.youtube.com/@PingIdentityTV/videos)
 - Webinar: This setup was used during a webinar and can be found here:

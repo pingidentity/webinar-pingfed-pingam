@@ -15,21 +15,21 @@ build_java:
 	mvn clean package
 
 build_docker_pf:
-	docker build --no-cache --tag webinar/pf:latest --build-arg version=pingfederate-12.3.3.zip --no-cache  -f Dockerfile_pf .
+	docker build --no-cache --tag webinar/pf:latest --build-arg version=pingfederate-13.0.0.zip --no-cache  -f Dockerfile_pf .
 
 build_docker_am:
-	docker build --no-cache --tag webinar/openam:latest --build-arg version=AM-8.0.1.war -f Dockerfile_am .
+	docker build --no-cache --tag webinar/openam:latest --build-arg version=AM-8.0.2.war -f Dockerfile_am .
 
 build_docker_pd:
 	docker build --no-cache  --tag webinar/pd:latest \
-	--build-arg version=PingDirectory-10.3.0.0.zip \
+	--build-arg version=PingDirectory-11.0.0.0.zip \
 	--build-arg hostname_pd=$(shell cat .env | grep HOSTNAME_PD) \
 	--build-arg sslpwd=$(shell cat .env | grep SSL_PWD | sed -e "s/SSL_PWD=//g") \
 	-f Dockerfile_pd .
 
 build_docker_ds:
 	docker build --no-cache --tag webinar/ds:latest \
-	--build-arg version=DS-8.0.0.zip \
+	--build-arg version=DS-8.0.2.zip \
 	--build-arg deploymentid=$(shell cat .env | grep DEPLOYMENT_ID | sed -e "s/DEPLOYMENT_ID=//g") \
 	--build-arg deploymentpwd=$(shell cat .env | grep DEPLOYMENT_PASSWORD | sed -e "s/DEPLOYMENT_PASSWORD=//g") \
 	--build-arg hostname_ds=$(shell cat .env | grep HOSTNAME_DS | sed -e "s/HOSTNAME_DS=//g") \
@@ -62,7 +62,7 @@ build_docker_playground:
 # - DEPLOYMENT_ID=Aftg...7bg
 #
 build_docker_pingds_helper:
-	docker build --no-cache --tag webinar/ds-helper:latest --build-arg version=DS-8.0.0.zip -f Dockerfile_ds_helper .
+	docker build --no-cache --tag webinar/ds-helper:latest --build-arg version=DS-8.0.2.zip -f Dockerfile_ds_helper .
 
 # Base for images that use java 17
 #
