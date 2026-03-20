@@ -5,8 +5,6 @@ OAuthPlayground is an example OAuth client that works with PingFederate. To buil
 - **https://www.pingidentity.com/en/resources/downloads/pingfederate.html**
 - open the **Add-Ons** tab, select **OAuthPlayground 4.4**
 
-Unzip it and read the provided documents.
-
 Place the zip file here:
 
 - **docker-build/add-ons/oauthplayground**  // right next to this README file
