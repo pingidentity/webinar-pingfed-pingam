@@ -198,13 +198,15 @@ This setup comes with different PingFederate policies and PingAM journeys.
 
 **Tip:** Enable/ disable the policy you want to try out.
 
-### Using an OAuth client
+### Using your OAuth client
 
 If you have configured an oauth client in **.env** open your client and select the **Login** button or whatever it may be that initiates an authorization_code flow.
 
 PingFederate will execute the configured policy.
 
-**Tip:** To install and use **OAuthPlayground** (which is a test/ demo OAuth client) follow these instructions:
+### Using an OAuthPlayground
+
+To install and use **OAuthPlayground** (which is a test/ demo OAuth client) follow these instructions:
 
 - **docker-build/add-ons/oauthplayground/README.md**
 
